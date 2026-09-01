@@ -1,0 +1,12 @@
+# secrets
+.env
+dashboard/.env.local
+
+# python
+coffeeshopvenv/
+__pycache__/
+*.pyc
+
+# node (Phase 2)
+dashboard/node_modules/
+dashboard/.next/
