@@ -9,6 +9,11 @@ export const fmtMoney = (n: number) => money.format(n || 0);
 
 export const fmtNum = (n: number) => new Intl.NumberFormat("en-US").format(n || 0);
 
+// Returns the correct word for a count ("1 order" vs "2 orders"); pair with
+// fmtNum for the number itself: `${fmtNum(n)} ${plural(n, "order")}`.
+export const plural = (n: number, singular: string, pluralForm = `${singular}s`) =>
+  n === 1 ? singular : pluralForm;
+
 export const fmtTime = (iso: string) =>
   new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 

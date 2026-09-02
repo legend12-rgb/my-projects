@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 function CloseIcon() {
   return (
@@ -48,7 +49,23 @@ export default function ChartModal({
   children: ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [rendered, setRendered] = useState(false);
+  const [shown, setShown] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   useEffect(() => setMounted(true), []);
+  useFocusTrap(rendered, panelRef);
+
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      const raf = requestAnimationFrame(() => setShown(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    setShown(false);
+    const t = setTimeout(() => setRendered(false), 180);
+    return () => clearTimeout(t);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -64,17 +81,24 @@ export default function ChartModal({
     };
   }, [open, onClose]);
 
-  if (!mounted || !open) return null;
+  if (!mounted || !rendered) return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/55 p-4 backdrop-blur-sm sm:p-10"
+      className={`fixed inset-0 z-50 overflow-y-auto bg-black/55 p-4 backdrop-blur-sm transition-opacity duration-200 ease-out sm:p-10 ${
+        shown ? "opacity-100" : "opacity-0"
+      }`}
       onClick={onClose}
-      role="dialog"
-      aria-modal="true"
     >
       <div
-        className="mx-auto w-full max-w-3xl overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-neutral-900"
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className={`mx-auto w-full max-w-3xl origin-top overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl outline-none transition-[opacity,transform] duration-200 ease-out dark:border-white/10 dark:bg-neutral-900 ${
+          shown ? "translate-y-0 scale-100 opacity-100" : "-translate-y-2 scale-[0.98] opacity-0"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* app-window chrome */}
@@ -86,7 +110,7 @@ export default function ChartModal({
               <span className="h-2.5 w-2.5 rounded-full bg-[#61c454]" />
             </span>
             <div className="ml-1">
-              <div className="text-sm font-semibold leading-tight">{title}</div>
+              <div id={titleId} className="text-sm font-semibold leading-tight">{title}</div>
               {hint ? <div className="text-xs text-foreground/45">{hint}</div> : null}
             </div>
           </div>

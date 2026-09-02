@@ -4,6 +4,18 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 type Row = { hour: string; count: number };
 
+// 24h hour string ("9".."20") -> plain 12h number ("9".."12","1".."8") — no
+// am/pm suffix on the axis itself, per the "keep it simple" request.
+function to12h(h: string): string {
+  const n = Number(h) % 12;
+  return String(n === 0 ? 12 : n);
+}
+function to12hLabel(h: string): string {
+  const n = Number(h);
+  const period = n < 12 ? "AM" : "PM";
+  return `${to12h(h)}:00 ${period}`;
+}
+
 export default function HourlyChart({
   data,
   height = 160,
@@ -19,13 +31,13 @@ export default function HourlyChart({
             dataKey="hour"
             tick={{ fontSize: 10, fill: "currentColor" }}
             className="text-foreground/40"
-            tickFormatter={(h: string) => `${h}h`}
+            tickFormatter={to12h}
             interval={1}
           />
           <Tooltip
             cursor={{ fill: "rgba(0,0,0,0.04)" }}
             formatter={(v) => [`${v} orders`, "Count"]}
-            labelFormatter={(l) => `${l}:00`}
+            labelFormatter={(l) => to12hLabel(String(l))}
             contentStyle={{
               borderRadius: 12,
               border: "1px solid rgba(0,0,0,0.08)",

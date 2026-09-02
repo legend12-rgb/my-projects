@@ -2,6 +2,16 @@
 export const ACCENT = "#c2703d";
 export const ACCENT_SOFT = "rgba(194, 112, 61, 0.85)";
 
+// Distinct per-coffee-type palette — the chart identity color for each type.
+// Deliberately NOT green-dominant: caramel / red-brown / teal-blue / violet.
+export const TYPE_COLOR: Record<string, string> = {
+  Arabica: "#c2703d", // caramel
+  Robusta: "#b5524a", // red-brown
+  Excelsa: "#2f8fa3", // teal-blue
+  Liberica: "#7a5cc4", // violet
+};
+export const typeColor = (t: string) => TYPE_COLOR[t] ?? "#8a7a6a";
+
 // Margin color scale: low margin -> red, high margin -> green.
 // The four coffee types span 6% (Robusta) to 13% (Liberica).
 export function marginColor(marginPct: number, lo = 6, hi = 13): string {

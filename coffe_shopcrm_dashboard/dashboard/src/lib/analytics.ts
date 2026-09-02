@@ -51,6 +51,7 @@ export function profitByProduct(orders: AnalyticsOrder[], idx: ProductIndex, top
       profit: Math.round(v.profit * 100) / 100,
       revenue: Math.round(v.revenue * 100) / 100,
       margin: idx[id]?.margin ?? 0,
+      type: idx[id]?.type ?? "",
     }))
     .sort((a, b) => b.profit - a.profit)
     .slice(0, top);
@@ -76,6 +77,40 @@ export function typeMix(orders: AnalyticsOrder[], idx: ProductIndex) {
       profitShare: (v.profit / totProf) * 100,
     }))
     .sort((a, b) => b.margin - a.margin);
+}
+
+export type TypeSegment = {
+  type: string;
+  revenue: number;
+  profit: number;
+  margin: number;
+  profitShare: number;
+  mostProfitable: boolean;
+};
+
+/** Per-type revenue/profit/margin, sorted by revenue desc, top-margin flagged. */
+export function typeSegments(orders: AnalyticsOrder[], idx: ProductIndex): TypeSegment[] {
+  const acc = new Map<string, { revenue: number; profit: number; margin: number }>();
+  for (const o of orders) {
+    const info = idx[o.product_id];
+    if (!info) continue;
+    const cur = acc.get(info.type) ?? { revenue: 0, profit: 0, margin: info.margin };
+    cur.revenue += o.total_amount;
+    cur.profit += o.quantity * info.profitPerBag;
+    acc.set(info.type, cur);
+  }
+  const totProf = [...acc.values()].reduce((s, v) => s + v.profit, 0) || 1;
+  const topMargin = Math.max(...[...acc.values()].map((v) => v.margin), 0);
+  return [...acc.entries()]
+    .map(([type, v]) => ({
+      type,
+      revenue: v.revenue,
+      profit: v.profit,
+      margin: Math.round(v.margin),
+      profitShare: (v.profit / totProf) * 100,
+      mostProfitable: v.margin === topMargin,
+    }))
+    .sort((a, b) => b.revenue - a.revenue);
 }
 
 export function loyaltyStats(orders: AnalyticsOrder[], meta: Record<string, CustomerMeta>) {

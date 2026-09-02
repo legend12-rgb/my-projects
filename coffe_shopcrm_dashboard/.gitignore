@@ -10,3 +10,10 @@ __pycache__/
 # node (Phase 2)
 dashboard/node_modules/
 dashboard/.next/
+
+# Demo-only (meeting) control — never commit this to GitHub
+dashboard/src/components/DemoOrderButton.tsx
+
+# Claude Code tooling / local MCP config — not part of the product
+.claude/
+.mcp.json

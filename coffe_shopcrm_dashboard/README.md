@@ -13,10 +13,15 @@ verified live against Supabase.
   (logical replication over websockets).
 - **Backend scripts:** Python 3.12 in `coffeeshopvenv/`
   (`psycopg2-binary`, `supabase`, `python-dotenv`).
-- **Security:** anon/authenticated get **SELECT only** (safe to embed the anon
-  key in the browser); `service_role` does all writes from trusted scripts.
-  Restocking is done by the owner in Supabase's **Table Editor** — the app
-  itself never writes, which keeps the public dashboard purely read-only.
+- **Security:** anon/authenticated get **SELECT only** on the tables (safe to
+  embed the anon key in the browser). The only writes the dashboard can make go
+  through two narrow, validated `security definer` RPCs — `restock_products`
+  (adds stock, capped) and `place_demo_order` (records a sale) — so the browser
+  can never touch prices, margins, or arbitrary columns. Bulk/admin writes still
+  run from trusted `service_role` scripts.
+- **Live inventory:** placing an order decrements stock via a DB trigger, which
+  in turn logs a `sale` row in the append-only ledger — so the "Restock" board,
+  the live feed, KPIs, and the low-stock alerts all stay in sync in real time.
 
 ## Tables
 
@@ -87,25 +92,24 @@ Recharts) using `@supabase/supabase-js` from the browser with the anon key.
 `dashboard/.env.local` holds only `NEXT_PUBLIC_SUPABASE_URL` /
 `NEXT_PUBLIC_SUPABASE_ANON_KEY` (never the service_role key).
 
-The dashboard leads with **decision-relevant analysis**, not vanity metrics:
+**App shell, not a scroll page.** A sidebar (collapses to a mobile drawer)
+routes between four real pages — no anchor-scrolling:
 
-- **Three headline findings**: revenue rank ≠ profit rank; Robusta is a volume
-  trap (20% revenue / 12% profit); the loyalty program shows no measurable
-  spend/frequency lift.
-- **Money**: total revenue + profit KPIs (all-history), profit-contribution by
-  product (bars colored by margin, red→green), revenue-vs-profit share by coffee
-  type, order-value distribution with median, sales-over-time (labelled synthetic).
-- **Customers**: one-time/repeat/dormant mix (names the reactivation list),
-  loyalty scorecard (honest "no lift"), geography as concentration risk
-  (78% US) + top US cities.
-- **Inventory & live**: live products table with low-stock flags, live
-  `stock_movements` ledger, hourly distribution (labelled uniform/synthetic),
-  and a live orders feed (realtime prepend, FK-enriched).
+| route | content |
+|---|---|
+| `/` (Overview) | 3 counterintuitive findings, revenue/profit KPIs, profit-by-product (bar color = margin), revenue-vs-profit share by type, order-value distribution, sales-over-time — the two flagship charts carry inline `30D/90D/6M/ALL` range chips |
+| `/customers` | one-time/repeat/dormant mix, loyalty scorecard (honest "no lift"), geography as concentration risk + ranked country/city list |
+| `/inventory` | live products table (low-stock flags), live `stock_movements` ledger, orders-by-hour (labelled uniform/synthetic) |
+| `/live-orders` | full-page realtime feed (50 rows), today's live stat cards |
 
-A single realtime channel fans out orders/products/customers/stock_movements
-INSERT/UPDATE events; all analytics recompute client-side on each event. Colour
-encodes data (margin scale, stock health) rather than decoration, and every
-synthetic dimension (dates, times, stock) is labelled as demo data.
+A single Supabase Realtime channel and all fetched data live in one
+`DashboardProvider` (`lib/DashboardContext.tsx`) mounted in the root layout —
+it survives client-side navigation, so switching pages never re-subscribes or
+re-fetches. Every chart is click-to-expand (`ExpandableChart` + `ChartModal`):
+opens a larger view with its own date-range control and a live recap strip,
+sharing range state with any inline chips on that same card. Colour encodes
+data (margin scale, stock health) rather than decoration, and every synthetic
+dimension (dates, times, stock) is labelled as demo data.
 
 ```bash
 cd dashboard

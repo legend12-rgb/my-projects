@@ -1,35 +1,96 @@
 @import "tailwindcss";
 
+/* Make Tailwind's `dark:` utilities follow our data-theme toggle (and OS dark
+   when no explicit theme is set), so utility colors stay in sync with the CSS
+   token colors. Without this, `dark:` never fires on the manual toggle and dark
+   mode breaks (white bands, white modals). */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not([data-theme="light"]) *, :not([data-theme="light"])) {
+      @slot;
+    }
+  }
+}
+
 :root {
-  --background: #f6f7f8;
-  --foreground: #171717;
+  /* Warm, light "clean SaaS" surfaces — page is a hair warmer than the cards. */
+  --background: #f5f4f1;
+  --surface: #ffffff;
+  --foreground: #1c1a17;
+
+  /* Ink: the dark primary (plays the role navy plays in the reference),
+     tuned espresso-dark so it belongs to a coffee product. */
+  --ink: #26201b;
+
+  /* Coffee "magnitude" ramp — the reference's blue ramp, re-hued to coffee. */
+  --coffee-1: #3d2a1c;
+  --coffee-2: #8a5a35;
+  --coffee-3: #c2703d;
+  --coffee-4: #e6c9a8;
+
+  /* Hairline border. */
+  --hairline: #eceae5;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --font-sans: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0b;
+  :root:not([data-theme="light"]) {
+    --background: #0c0b0a;
+    --surface: #171512;
     --foreground: #ededed;
+    --ink: #f3ede6;
+    --hairline: #2a2723;
   }
+}
+
+:root[data-theme="dark"] {
+  --background: #0c0b0a;
+  --surface: #171512;
+  --foreground: #ededed;
+  --ink: #f3ede6;
+  --hairline: #2a2723;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
+}
+
+/* Recharts renders <text> as SVG, which does not inherit the body font the
+   way HTML does — browsers fall back to a UA serif for SVG text unless the
+   font-family is set explicitly. Force every chart's ticks/labels/legend
+   onto the app's sans stack so charts don't silently render in serif. */
+.recharts-wrapper,
+.recharts-wrapper text,
+.recharts-tooltip-wrapper {
+  font-family: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
 }
 
 @keyframes flash {
   0% {
-    background-color: rgba(16, 185, 129, 0.18);
+    background-color: rgba(194, 112, 61, 0.16);
   }
   100% {
     background-color: transparent;
+  }
+}
+
+@keyframes barGrow {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
   }
 }

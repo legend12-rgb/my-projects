@@ -5,6 +5,29 @@ import { fmtMoney } from "@/lib/format";
 type Country = { country: string; revenue: number; share: number };
 type City = { city: string; revenue: number };
 
+// Two-letter country codes instead of emoji flags: regional-indicator flag
+// emoji don't render on Windows (they show as "US"/"GB" letter pairs), so a
+// styled code chip looks consistent for every viewer, on any OS.
+const CODES: Record<string, string> = {
+  "United States": "US",
+  Ireland: "IE",
+  "United Kingdom": "GB",
+  Canada: "CA",
+  Australia: "AU",
+  Germany: "DE",
+  France: "FR",
+  India: "IN",
+};
+
+function CountryCode({ country }: { country: string }) {
+  const code = CODES[country] ?? "??";
+  return (
+    <span className="inline-flex h-4 min-w-[1.6rem] items-center justify-center rounded-[4px] bg-foreground/8 px-1 text-[9px] font-bold tracking-wide text-foreground/55">
+      {code}
+    </span>
+  );
+}
+
 export default function GeographyPanel({
   countries,
   usCities,
@@ -21,11 +44,17 @@ export default function GeographyPanel({
         <span className="font-semibold text-red-500">Concentration risk: </span>
         {topShare.toFixed(0)}% of revenue comes from one country ({countries[0]?.country}).
       </div>
-      <div className="space-y-2">
-        {countries.slice(0, 4).map((c) => (
+      <div className="space-y-2.5">
+        {countries.slice(0, 4).map((c, i) => (
           <div key={c.country}>
-            <div className="mb-0.5 flex justify-between text-sm">
-              <span className="text-foreground/75">{c.country}</span>
+            <div className="mb-1 flex items-center justify-between text-sm">
+              <span className="flex items-center gap-2 text-foreground/75">
+                <span className="flex h-4 w-4 items-center justify-center text-[10px] font-semibold text-foreground/35">
+                  {i + 1}
+                </span>
+                <CountryCode country={c.country} />
+                {c.country}
+              </span>
               <span className="tabular-nums text-foreground/55">
                 {fmtMoney(c.revenue)}
                 <span className="ml-1.5 text-xs text-foreground/40">{c.share.toFixed(0)}%</span>
@@ -33,7 +62,7 @@ export default function GeographyPanel({
             </div>
             <div className="h-2 rounded-full bg-foreground/8">
               <div
-                className="h-2 rounded-full bg-[#c2703d]"
+                className="h-2 rounded-full bg-[#c2703d] transition-[width] duration-300 ease-out"
                 style={{ width: `${c.share}%` }}
               />
             </div>

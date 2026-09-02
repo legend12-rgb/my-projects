@@ -16,12 +16,12 @@ export default function InventoryActivity({
   const labels = new Map(products.map((p) => [p.product_id, productLabel(p)]));
   if (movements.length === 0)
     return (
-      <p className="px-5 pb-4 text-sm text-foreground/40">
+      <div className="flex h-40 items-center justify-center px-5 pb-4 text-sm text-foreground/40">
         Waiting for live inventory changes…
-      </p>
+      </div>
     );
   return (
-    <ul className="max-h-[220px] space-y-1 overflow-y-auto px-3 pb-3">
+    <ul className="max-h-[420px] space-y-1 overflow-y-auto px-3 pb-3">
       {movements.map((m) => (
         <li
           key={m.movement_id}

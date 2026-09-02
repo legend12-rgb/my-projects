@@ -5,6 +5,7 @@ import type {
   EnrichedOrder,
   OrderRow,
   Product,
+  StockMovement,
 } from "./types";
 
 export const productLabel = (p: {
@@ -32,6 +33,22 @@ export async function fetchProducts(): Promise<Product[]> {
     size_kg: Number(p.size_kg),
     stock_quantity: Number(p.stock_quantity),
   })) as Product[];
+}
+
+// Most-recent inventory movements (restocks + sales), so the "Inventory
+// activity" ledger shows real history on load instead of only session-live rows.
+export async function fetchRecentMovements(limit = 30): Promise<StockMovement[]> {
+  const { data, error } = await supabase
+    .from("stock_movements")
+    .select("movement_id, product_id, delta, movement_type, stock_after, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []).map((m) => ({
+    ...m,
+    delta: Number(m.delta),
+    stock_after: Number(m.stock_after),
+  })) as StockMovement[];
 }
 
 export async function fetchCustomerCount(): Promise<number> {
