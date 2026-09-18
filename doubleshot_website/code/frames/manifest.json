@@ -1,0 +1,32 @@
+{
+  "source": {
+    "filename": "trimmed_master.mp4",
+    "duration": 10.4,
+    "resolution": "1920x1080",
+    "fps": 30.0,
+    "codec": "h264",
+    "total_source_frames": 312
+  },
+  "frames": {
+    "target_count": 140,
+    "format": "webp",
+    "quality": 72,
+    "naming_pattern": "frame-{NNNN}.webp"
+  },
+  "recommended_scroll_height": "450vh",
+  "created": "2026-09-09T23:08:32",
+  "desktop": {
+    "resolution": "1920x1080",
+    "actual_count": 140,
+    "total_bytes": 8144140,
+    "avg_frame_bytes": 58172,
+    "total_mb": 7.77
+  },
+  "mobile": {
+    "resolution": "960x540",
+    "actual_count": 140,
+    "total_bytes": 3578248,
+    "avg_frame_bytes": 25558,
+    "total_mb": 3.41
+  }
+}

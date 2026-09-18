@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Menu &middot; Doubleshot Coffee Roasters</title>
+<meta name="description" content="The full Doubleshot menu: espresso, signatures, speciality pour-overs, cold drinks and tea." />
+<meta name="theme-color" content="#0A2111" />
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=1789759582">
+<!-- defer: render-blocking CDN scripts delayed first paint enough that the
+     cross-document View Transition was never created on inner pages. -->
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script defer src="assets/logo-paths.js?v=1789759582"></script>
+<script defer src="assets/logo.js?v=1789759582"></script>
+<style>
+/* ---------- inner-page hero: giant type + a floating subject --------------
+   Replaces the blurred film still. Sons & Daughters-style oversized title;
+   the cut-out sits in front of the letters for depth. No dead gap below. */
+.hx{position:relative;min-height:88vh;padding:17vh var(--pad) 7vh;display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:end;gap:2vw;overflow:hidden}
+.hx::before{content:'';position:absolute;right:6vw;top:18vh;width:36vh;height:36vh;border-radius:50%;
+  background:radial-gradient(circle,rgba(198,164,114,.14) 0%,rgba(198,164,114,0) 68%);pointer-events:none}
+.hx-copy{position:relative;z-index:2;grid-column:1;grid-row:1}
+.hx-title{font-family:var(--heading);font-weight:800;font-size:clamp(3rem,7.6vw,8.2rem);line-height:.8;
+  letter-spacing:-.065em;margin:0 0 3.4vh -.05em;white-space:nowrap;color:var(--warm-white)}
+.hx.in .hx-title .char{transform:translateY(0)}
+/* A framed photo has hard edges, so the title must not run into it (a cut-out
+   can overlap the letters; a rectangle just looks like a collision). */
+.hx.framed .hx-title{font-size:clamp(2.8rem,6.4vw,7rem)}
+.hx-sub{font-size:clamp(15px,1.15vw,18px);line-height:1.5;color:var(--warm-white-dim);max-width:40ch;margin:0}
+.hx-copy .overline,.hx-copy .vegline,.hx-sub{opacity:0;transform:translateY(16px);
+  transition:opacity .9s ease .75s,transform 1s cubic-bezier(.16,1,.3,1) .75s}
+.hx-copy .overline,.hx-copy .vegline{margin-bottom:2.4vh}
+.hx.in .hx-copy .overline,.hx.in .hx-copy .vegline,.hx.in .hx-sub{opacity:1;transform:none}
+.hx-art{grid-column:2;grid-row:1;justify-self:center;align-self:center;margin:0;position:relative;z-index:1}
+.hx-art-in{opacity:0;transform:translateY(60px) scale(.95);
+  transition:opacity 1.2s ease .3s,transform 1.5s cubic-bezier(.16,1,.3,1) .3s}
+.hx.in .hx-art-in{opacity:1;transform:none}
+.hx-art.cut img{max-height:52vh;width:auto;max-width:100%;
+  filter:brightness(.9) drop-shadow(0 50px 60px rgba(0,0,0,.55));animation:hxfloat 8s ease-in-out infinite alternate}
+.hx-art.frame .hx-art-in{width:min(27vw,54vh);aspect-ratio:4/5;overflow:hidden}
+.hx-art.frame img{width:100%;height:100%;object-fit:cover;filter:brightness(.8) saturate(.9)}
+@keyframes hxfloat{from{transform:translateY(0) rotate(-1.2deg)}to{transform:translateY(-16px) rotate(1.2deg)}}
+.wrap{padding:var(--section) var(--pad)}
+.lede{max-width:52ch;font-size:clamp(17px,1.55vw,21px);line-height:1.45;font-weight:300;
+  letter-spacing:-.015em;margin:0 0 4vw}
+h2.sec{font-family:var(--heading);font-weight:500;letter-spacing:-.04em;
+  font-size:clamp(1.6rem,2.7vw,2.5rem);line-height:.98;margin:0 0 20px}
+.big{font-family:var(--display);font-weight:700;letter-spacing:-.04em;
+  font-size:clamp(1.7rem,3.1vw,2.7rem);line-height:1;margin:0 0 14px}
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:4vw}
+
+/* ---------- marquee + giant wordmark (shared with the homepage) ---------- */
+.marquee{position:relative;overflow:hidden;padding:2.2vw 0;background:var(--ink);
+  border-top:1px solid rgba(241,237,228,.12);border-bottom:1px solid rgba(241,237,228,.12)}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-track span{font-family:var(--heading);font-weight:500;font-size:clamp(1.3rem,2.6vw,2.5rem);
+  letter-spacing:-.035em;line-height:1;color:var(--warm-white);padding:0 .45em;white-space:nowrap}
+.mq-track span.dim{color:rgba(241,237,228,.55)}   /* .34 measured 2.81:1 */
+.mq-track b{font-family:var(--heading);font-weight:300;font-size:clamp(1.3rem,2.6vw,2.5rem);line-height:1;color:var(--accent);opacity:.8}
+.giant{font-family:var(--display);font-weight:700;font-size:17vw;line-height:.82;letter-spacing:-.05em;
+  color:var(--warm-white);white-space:nowrap;overflow:hidden;padding-bottom:.08em;margin:0 0 4vw}
+.giant.in .char{transform:translateY(0)}
+
+@media (max-width:820px){
+  /* top padding clears the ~70px phone header (24vw left the hero art touching it) */
+  .hx{grid-template-columns:1fr;min-height:0;padding:calc(18vw + 48px) var(--pad) 10vw;gap:6vw;align-items:start}
+  .hx-art{grid-column:1;grid-row:1;justify-self:center}
+  .hx-copy{grid-row:2}
+  .hx-title{font-size:16vw}
+  .hx-art.cut img{max-height:34vh}
+  .hx-art.frame .hx-art-in{width:70vw}
+  .hx-sub{font-size:16px}
+  .cols{grid-template-columns:1fr;gap:10vw}
+  /* grid children may shrink below their content on phones (a long unbreakable row
+     otherwise widens the whole page; found on Menu at 360px) */
+  .hx > *,.cols > *,.pair > *,.lmap > *,.city-body > *,.loc-all > *,.a3 > *,.mgrid > *{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .hx-art.cut img{animation:none}
+  .hx-art-in,.hx-copy .overline,.hx-copy .vegline,.hx-sub{opacity:1;transform:none;transition:none}
+}
+
+/* ---------- menu: the signature moment (desktop, pinned) -----------------
+   Scrolling pours each signature into view: the cut-out fills upward behind a
+   wave line (a mask 3x the box, its position animated), the name rises out of
+   a mask above it, the rail names the step. site.js adds body.has-sig; without
+   it (phones, reduced motion, no JS) the plain featured row shows instead. */
+.sig{display:none;position:relative}
+body.has-sig .sig{display:block}
+body.has-sig .featured{display:none}
+.sig-pin{position:relative;height:100vh;overflow:hidden}
+.sig-kick{position:absolute;top:15vh;left:var(--pad);margin:0}
+.sig-names{position:absolute;left:0;right:0;top:19vh}
+.sig-name{position:absolute;left:0;right:0;margin:0;overflow:hidden;text-align:center;font-family:var(--heading);
+  font-weight:800;font-size:clamp(2.6rem,6.6vw,7.4rem);letter-spacing:-.06em;line-height:.95;padding-bottom:.06em;
+  color:var(--warm-white);white-space:nowrap}
+.sig-name span{display:inline-block;transform:translateY(110%);transition:transform .5s cubic-bezier(.65,0,.35,1)}
+.sig-name.on span{transform:none;transition:transform .9s cubic-bezier(.16,1,.3,1) .15s}
+.sig-name.past span{transform:translateY(-110%)}
+.sig-stage{position:absolute;left:0;right:0;top:34vh;bottom:7vh}
+.sig-stage::before{content:'';position:absolute;left:50%;top:58%;width:52vh;height:52vh;border-radius:50%;
+  transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(198,164,114,.16) 0%,rgba(198,164,114,0) 68%)}
+.sig-cup{position:absolute;inset:0;margin:0;display:flex;align-items:flex-end;justify-content:center;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 300' preserveAspectRatio='none'%3E%3Cpath d='M0 150 Q12.5 141 25 150 T50 150 T75 150 T100 150 V300 H0Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 300' preserveAspectRatio='none'%3E%3Cpath d='M0 150 Q12.5 141 25 150 T50 150 T75 150 T100 150 V300 H0Z'/%3E%3C/svg%3E");
+  -webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:0 0%;mask-position:0 0%;
+  transition:-webkit-mask-position 1.3s cubic-bezier(.65,0,.35,1),mask-position 1.3s cubic-bezier(.65,0,.35,1),
+    opacity .6s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+.sig-cup.on,.sig-cup.past{-webkit-mask-position:0 100%;mask-position:0 100%}
+.sig-cup.past{opacity:0;transform:translateY(-6vh)}
+.sig-cup img{max-height:100%;max-width:44vw;width:auto;height:auto;display:block;
+  filter:brightness(.9) drop-shadow(0 40px 46px rgba(0,0,0,.55));animation:hxfloat 8s ease-in-out infinite alternate}
+.sig-meta{position:absolute;left:var(--pad);bottom:9vh;width:30vw}
+.sig-meta-i{position:absolute;left:0;bottom:0;opacity:0;transform:translateY(14px);
+  transition:opacity .4s ease,transform .6s cubic-bezier(.16,1,.3,1)}
+.sig-meta-i.on{opacity:1;transform:none;transition-delay:.3s}
+.sig-meta-i em{display:block;font-style:normal;font-family:var(--heading);font-weight:500;
+  font-size:clamp(1.4rem,2.2vw,2.2rem);letter-spacing:-.03em;color:var(--accent);margin-bottom:1vh;font-variant-numeric:tabular-nums}
+.sig-meta-i em::before{content:'₹';opacity:.6;margin-right:2px}
+.sig-meta-i p{margin:0;max-width:30ch;font-size:16px;line-height:1.5;color:var(--warm-white-dim)}
+.sig-rail{position:absolute;right:var(--pad);bottom:9vh;list-style:none;margin:0;padding:0 0 0 18px;
+  border-left:1px solid var(--line)}
+.sig-rail li{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;line-height:1.3;padding:5px 0;
+  color:rgba(241,237,228,.55);transition:color .4s,transform .6s cubic-bezier(.16,1,.3,1)}
+.sig-rail li.on{color:var(--warm-white);transform:translateX(8px)}
+
+/* ---------- menu: from the counter (real cut-outs, links to Bakery) ------- */
+.fromcounter{padding:0 var(--pad) 8vw}
+.fc-head{display:flex;justify-content:space-between;align-items:baseline;gap:4vw;margin-bottom:3vw}
+.fc-head .act-link{margin-top:0}
+.fc-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3vw;align-items:end}
+.fc{margin:0;text-align:center}
+.fc:nth-child(even){margin-bottom:3vw}
+.fc img{height:clamp(150px,19vw,260px);width:auto;max-width:100%;margin:0 auto;object-fit:contain;display:block;
+  filter:brightness(.92) drop-shadow(0 26px 30px rgba(0,0,0,.5))}
+.fc figcaption{margin-top:1.4vw;font-size:14px;color:var(--warm-white-dim)}
+@media (max-width:820px){.fc-row{grid-template-columns:1fr 1fr;row-gap:8vw}.fc:nth-child(even){margin-bottom:0}}
+
+/* ---------- menu: featured cut-outs --------------------------------------- */
+.featured{padding:3vw var(--pad) 9vw;position:relative}
+.featured .overline{margin-bottom:5vw}
+.feat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:5vw;row-gap:6vw;align-items:end}
+.feat{margin:0;text-align:center;will-change:transform}
+.feat:nth-child(3n+2){margin-bottom:7vw}
+.feat:nth-child(3n){margin-bottom:3.5vw}
+.feat img{height:clamp(240px,26vw,380px);width:auto;max-width:100%;margin:0 auto;object-fit:contain;
+  filter:brightness(.9) drop-shadow(0 36px 40px rgba(0,0,0,.5));transition:transform .9s cubic-bezier(.16,1,.3,1)}
+.feat:hover img{transform:translateY(-14px) rotate(-2deg)}
+.feat figcaption{margin-top:2.2vw;display:flex;justify-content:center;align-items:baseline;gap:14px}
+.feat b{font-family:var(--heading);font-weight:500;font-size:clamp(1rem,1.2vw,1.2rem);letter-spacing:-.03em}
+.feat em{font-style:normal;font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums}
+.feat em::before{content:'\20B9';opacity:.55;margin-right:1px}
+
+/* ---------- menu: sticky rail + categories -------------------------------- */
+.mgrid{display:grid;grid-template-columns:minmax(0,.6fr) minmax(0,2fr);gap:6vw;padding:2vw var(--pad) var(--section)}
+.mrail{position:sticky;top:18vh;align-self:start}
+.mrail ol{list-style:none;margin:0 0 4vh;padding:0;border-top:1px solid var(--line-soft)}
+.mrail li{border-bottom:1px solid var(--line-soft)}
+.mrail a{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:1.5vh 0;
+  color:rgba(241,237,228,.55);transition:color .5s}
+.mrail a:hover{color:var(--warm-white-dim)}
+.mrail .rn{font-family:var(--heading);font-weight:500;font-size:clamp(1.2rem,1.6vw,1.6rem);letter-spacing:-.04em;
+  line-height:1;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.mrail .rc{font-size:12px;font-variant-numeric:tabular-nums}
+.mrail a.on{color:var(--warm-white)}
+.mrail a.on .rn{transform:translateX(14px)}
+.mrail a.on .rc{color:var(--accent)}
+.mcat{margin-bottom:9vw;scroll-margin-top:110px}
+.mcat-h{font-family:var(--heading);font-weight:700;font-size:clamp(2rem,4.2vw,4.4rem);letter-spacing:-.055em;
+  line-height:.9;margin:0 0 2.4vw;color:var(--warm-white)}
+.mcat .menu{columns:2;column-gap:4vw;margin-top:0}
+.mcat .menu li{break-inside:avoid}
+.mcat .menu li b{transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.mcat .menu li:hover b{transform:translateX(8px)}
+.mcat .menu li:hover em{color:var(--warm-white)}
+.mcat-add .mcat-h{font-size:clamp(1.6rem,3vw,2.8rem)}
+
+@media (max-width:1000px){.mcat .menu{columns:1}}
+@media (max-width:820px){
+  .feat-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:58vw;overflow-x:auto;scroll-snap-type:x mandatory;
+    padding-bottom:4vw;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad)}
+  .feat{scroll-snap-align:center;margin-bottom:0 !important}
+  .feat img{height:52vw}
+  /* minmax(0,1fr), not 1fr: the phone rail's row of links set the column's min-content,
+     so on a 360px phone the menu column was 350px and the page's layout width 385px */
+  .mgrid{grid-template-columns:minmax(0,1fr);gap:4vw}
+  .mrail{position:sticky;top:0;z-index:20;background:var(--ink);margin:0 calc(var(--pad) * -1);padding:12px var(--pad)}
+  .mrail ol{display:flex;gap:22px;overflow-x:auto;border:0;margin:0}
+  .mrail li{border:0;flex:none}
+  .mrail a{padding:6px 0;position:relative}
+  /* invisible 44px touch target; the sticky rail keeps its height */
+  .mrail a::after{content:'';position:absolute;inset:-8px -4px}
+  .mrail .rn{font-size:1.1rem}
+  .mrail .rc,.mrail .vegline{display:none}
+  .mrail a.on .rn{transform:none}
+  .mcat-h{font-size:11vw}
+  /* 2026-09-13: the rail sits under the header while it shows and takes the top once
+     it hides (html.nav-hidden + --navh from mnav.js); it used to slide under the bar */
+  .mrail{transition:top .3s ease}
+  html:not(.nav-hidden) .mrail{top:var(--navh,60px)}
+  /* 2026-09-13: the signature moment on phones (was desktop only) */
+  .sig-kick{top:12vh}
+  .sig-names{top:17vh}
+  .sig-name{font-size:10vw;padding:0 4vw}
+  .sig-stage{top:27vh;bottom:25vh}
+  .sig-stage::before{width:34vh;height:34vh}
+  .sig-cup{align-items:center}   /* bottom-aligned left a wide gap under the name */
+  .sig-cup img{max-width:72vw}
+  .sig-meta{left:var(--pad);right:var(--pad);width:auto;bottom:calc(7vh + 44px)}
+  .sig-meta-i{left:0;right:0;text-align:center}
+  .sig-meta-i p{margin:0 auto}
+  /* the step rail becomes a row of short bars beside the kicker */
+  .sig-rail{top:calc(12vh + 6px);bottom:auto;display:flex;gap:6px;padding:0;border:0}
+  .sig-rail li{width:14px;height:2px;padding:0;overflow:hidden;text-indent:120%;white-space:nowrap;
+    background:rgba(241,237,228,.3);transition:background .4s,width .4s}
+  .sig-rail li.on{width:28px;background:var(--accent);transform:none}
+}
+
+</style>
+</head>
+<body>
+
+<header id="nav">
+  <a class="wordmark" href="index.html"><span class="nav-mark" data-ds-mark="load" aria-hidden="true"></span>Doubleshot</a>
+  <nav>
+    <a href="menu.html">Menu</a>
+    <a href="bakery.html">Bakery</a>
+    <a href="roastery.html">Roastery</a>
+    <a href="locations.html">Locations</a>
+    <!-- 2026-09-12: real order links, each verified to load (qa/2026-09-12_order).
+         Zomato = delivery, 5 outlets. Swiggy lists these cafes only on Dineout (table
+         booking); its delivery pages returned an error, so they are labelled as such. -->
+    <details class="order">
+      <summary>Order <b>Zomato</b><i>/</i><b>Swiggy</b></summary>
+      <div class="order-pop">
+        <p class="op-k">Order from</p>
+        <div class="op-choose">
+          <button type="button" data-op="zomato"><b>Zomato</b><span>Delivery from five cafés</span></button>
+          <button type="button" data-op="swiggy"><b>Swiggy</b><span>Book a table (Dineout)</span></button>
+        </div>
+        <div class="op-sec" data-op-sec="zomato">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Zomato</h3>
+          <ul class="op-list">
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-1-ranjit-avenue/order" target="_blank" rel="noopener">Ranjit Avenue <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-kabir-park/order" target="_blank" rel="noopener">Kabir Park <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-gt-road/order" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/chandigarh/doubleshot-coffee-roasters-sector-78-mohali/order" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+            <li><a href="https://www.zomato.com/jalandhar/doubleshot-coffee-roasters-3-model-town/order" target="_blank" rel="noopener">Model Town <span>Jalandhar</span></a></li>
+          </ul>
+        </div>
+        <div class="op-sec" data-op-sec="swiggy">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Swiggy</h3>
+          <ul class="op-list">
+            <li><a href="https://www.swiggy.com/restaurants/amritsar/g-t-road/double-shot-coffee-roasters-680189/dineout" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.swiggy.com/restaurants/chandigarh/sector-78-mohali/doubleshot-coffee-roasters-693808/dineout" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+          </ul>
+          <p class="op-note">On Swiggy these cafés take table bookings (Dineout). For delivery, use Zomato.</p>
+        </div>
+      </div>
+    </details>
+    <!-- 2026-09-13: phones (<=820px) get every page from this button (assets/mnav.js) -->
+    <button class="mnav-btn" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open pages"><i></i><i></i></button>
+  </nav>
+</header>
+<div class="mnav" id="mnav" hidden>
+  <nav aria-label="Pages">
+    <ol class="mnav-list">
+      <li style="--i:0"><a href="index.html"><span>Home</span></a></li>
+      <li style="--i:1"><a href="menu.html"><span>Menu</span><em>Every drink</em></a></li>
+      <li style="--i:2"><a href="bakery.html"><span>Bakery</span><em>100% eggless</em></a></li>
+      <li style="--i:3"><a href="roastery.html"><span>Roastery</span><em>On premise</em></a></li>
+      <li style="--i:4"><a href="locations.html"><span>Locations</span><em>Five caf&eacute;s</em></a></li>
+    </ol>
+    <div class="mnav-foot">
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <a class="ig" href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+<section class="hx">
+  <div class="hx-copy">
+    <div class="overline">Every day, 9:00 to 21:00</div>
+    <h1 class="hx-title">Menu</h1>
+    <p class="hx-sub">39 drinks, made properly. Prices in rupees.</p>
+  </div>
+  <figure class="hx-art cut" data-parallax="-0.14" data-scale="1"><div class="hx-art-in"><img src="assets/img/cut-matcha.webp" alt="Iced matcha latte poured in layers"></div></figure>
+</section>
+<section class="sig" aria-label="House signatures">
+  <div class="sig-pin">
+    <p class="overline sig-kick">House signatures</p>
+    <div class="sig-names">
+      <h2 class="sig-name on"><span>DS Tiramisu Latt&eacute;</span></h2>
+      <h2 class="sig-name"><span>Iced Matcha Latt&eacute;</span></h2>
+      <h2 class="sig-name"><span>Hot Chocolate</span></h2>
+      <h2 class="sig-name"><span>V60 Pour-over</span></h2>
+      <h2 class="sig-name"><span>Affogato</span></h2>
+      <h2 class="sig-name"><span>Iced Latt&eacute;</span></h2>
+    </div>
+    <div class="sig-stage">
+      <figure class="sig-cup on"><img loading="lazy" src="assets/img/cut-tiramisu.webp" width="566" height="465" alt="DS tiramisu latte with cocoa-dusted cream and a biscuit"></figure>
+      <figure class="sig-cup"><img loading="lazy" src="assets/img/cut-matcha.webp" width="423" height="713" alt="Iced matcha latte poured in layers"></figure>
+      <figure class="sig-cup"><img loading="lazy" src="assets/img/cut-hotchoc.webp" width="690" height="565" alt="Hot chocolate with whipped cream and cocoa"></figure>
+      <figure class="sig-cup"><img loading="lazy" src="assets/img/cut-v60.webp" width="424" height="675" alt="V60 dripper over a glass server"></figure>
+      <figure class="sig-cup"><img loading="lazy" src="assets/img/cut-affogato.webp" width="320" height="803" alt="Two scoops of vanilla ice cream in a glass, espresso poured over"></figure>
+      <figure class="sig-cup"><img loading="lazy" src="assets/img/cut-iced-layered.webp" width="426" height="967" alt="Iced latte in a tall glass, topped with whipped cream and cinnamon"></figure>
+    </div>
+    <div class="sig-meta">
+      <div class="sig-meta-i on"><em>350</em><p>Ours. The initials are the clue.</p></div>
+      <div class="sig-meta-i"><em>300</em><p>Matcha poured in layers over milk and ice.</p></div>
+      <div class="sig-meta-i"><em>290</em><p>Whipped cream and cocoa on top.</p></div>
+      <div class="sig-meta-i"><em>260</em><p>Poured by hand, hot or iced.</p></div>
+      <div class="sig-meta-i"><em>230</em><p>Vanilla ice cream, espresso poured over.</p></div>
+      <div class="sig-meta-i"><em>240</em><p>Tall and iced, whipped cream and cinnamon on top.</p></div>
+    </div>
+    <ol class="sig-rail">
+      <li class="on">DS Tiramisu Latt&eacute;</li>
+      <li>Iced Matcha Latt&eacute;</li>
+      <li>Hot Chocolate</li>
+      <li>V60 Pour-over</li>
+      <li>Affogato</li>
+      <li>Iced Latt&eacute;</li>
+    </ol>
+  </div>
+</section>
+<section class="featured">
+  <p class="overline">House signatures</p>
+  <div class="feat-row">
+    <figure class="feat"><img src="assets/img/cut-tiramisu.webp" width="566" height="465" alt="DS tiramisu latte with cocoa-dusted cream and a biscuit" loading="lazy"><figcaption><b>DS Tiramisu Latt&eacute;</b><em>350</em></figcaption></figure>
+    <figure class="feat"><img src="assets/img/cut-matcha.webp" width="423" height="713" alt="Iced matcha latte poured in layers" loading="lazy"><figcaption><b>Iced Matcha Latt&eacute;</b><em>300</em></figcaption></figure>
+    <figure class="feat"><img src="assets/img/cut-hotchoc.webp" width="690" height="565" alt="Hot chocolate with whipped cream and cocoa" loading="lazy"><figcaption><b>Hot Chocolate</b><em>290</em></figcaption></figure>
+    <figure class="feat"><img src="assets/img/cut-v60.webp" width="424" height="675" alt="V60 dripper over a glass server" loading="lazy"><figcaption><b>V60 Pour-over</b><em>260</em></figcaption></figure>
+    <figure class="feat"><img src="assets/img/cut-affogato.webp" width="320" height="803" alt="Two scoops of vanilla ice cream in a glass, espresso poured over" loading="lazy"><figcaption><b>Affogato</b><em>230</em></figcaption></figure>
+    <figure class="feat"><img src="assets/img/cut-iced-layered.webp" width="426" height="967" alt="Iced latte in a tall glass, topped with whipped cream and cinnamon" loading="lazy"><figcaption><b>Iced Latt&eacute;</b><em>240</em></figcaption></figure>
+  </div>
+</section>
+<section class="fromcounter">
+  <div class="fc-head"><h2 class="sec">From the counter</h2><a class="act-link" href="bakery.html">The bakery</a></div>
+  <div class="fc-row">
+    <figure class="fc"><img loading="lazy" src="assets/img/cut-croissant-sandwich.webp" width="547" height="605" alt="Croissant sandwich"><figcaption>Croissant sandwich</figcaption></figure>
+    <figure class="fc"><img loading="lazy" src="assets/img/cut-cookie-croissant.webp" width="549" height="430" alt="Cookie croissant"><figcaption>Cookie croissant</figcaption></figure>
+    <figure class="fc"><img loading="lazy" src="assets/img/cut-bagel-sesame.webp" width="231" height="237" alt="Sesame bagel"><figcaption>Sesame bagel</figcaption></figure>
+    <figure class="fc"><img loading="lazy" src="assets/img/cut-turnover.webp" width="682" height="659" alt="Apple turnover"><figcaption>Apple turnover</figcaption></figure>
+  </div>
+</section>
+<div class="mgrid">
+  <aside class="mrail">
+    <ol>
+      <li><a href="#espresso"><span class="rn">Espresso</span><span class="rc">10</span></a></li>
+      <li><a href="#signatures"><span class="rn">Signatures</span><span class="rc">11</span></a></li>
+      <li><a href="#speciality"><span class="rn">Speciality</span><span class="rc">05</span></a></li>
+      <li><a href="#cold"><span class="rn">Cold</span><span class="rc">10</span></a></li>
+      <li><a href="#tea"><span class="rn">Tea</span><span class="rc">03</span></a></li>
+    </ol>
+    <div class="vegline"><svg class="veg" viewBox="0 0 20 20" aria-label="Eggless" role="img"><rect x="1" y="1" width="18" height="18"/><circle cx="10" cy="10" r="4.5"/></svg> Every bake and savoury is eggless</div>
+  </aside>
+  <div class="mcats">
+    <section class="mcat" id="espresso">
+      <h2 class="mcat-h">Espresso</h2>
+      <ul class="menu">
+        <li><b>Espresso shot</b><em>150</em></li>
+        <li><b>Americano</b><span>Hot / iced</span><em>180 / 205</em></li>
+        <li><b>Cortado</b><span>Hot / iced</span><em>190 / 195</em></li>
+        <li><b>Cappuccino</b><span>Hot / iced</span><em>190 / 235</em></li>
+        <li><b>Flat white</b><em>190</em></li>
+        <li data-img="assets/img/cut-iced-layered.webp"><b>Latt&eacute;</b><span>Hot / iced</span><em>220 / 240</em></li>
+        <li><b>Mocha</b><span>Hot / iced</span><em>265 / 280</em></li>
+        <li><b>White mocha</b><span>Hot / iced</span><em>285 / 300</em></li>
+        <li><b>Toasted spice latte</b><span>Hot / iced</span><em>280</em></li>
+        <li data-img="assets/img/cut-affogato.webp"><b>Affogato</b><em>230</em></li>
+      </ul>
+    </section>
+    <section class="mcat" id="signatures">
+      <h2 class="mcat-h">Signatures</h2>
+      <ul class="menu">
+        <li><b>Jaggery latt&eacute;</b><span>Gur, not sugar.</span><em>260</em></li>
+        <li><b>Masala chai latt&eacute;</b><span>The one you actually grew up on.</span><em>190</em></li>
+        <li data-img="assets/img/cut-tiramisu.webp"><b>DS tiramisu latt&eacute;</b><span>Ours. The initials are the clue.</span><em>350</em></li>
+        <li><b>Mont Blanc</b><em>299</em></li>
+        <li><b>Espresso Blanc</b><em>339</em></li>
+        <li><b>Matcha Cloud</b><em>339</em></li>
+        <li><b>Roasted hazelnut latt&eacute;</b><em>280</em></li>
+        <li><b>Roasted almond latt&eacute;</b><em>280</em></li>
+        <li data-img="assets/img/cut-hotchoc.webp"><b>Hot chocolate</b><em>290</em></li>
+        <li><b>Mug of love</b><em>305</em></li>
+        <li><b>Double malt-a</b><em>350</em></li>
+      </ul>
+    </section>
+    <section class="mcat" id="speciality">
+      <h2 class="mcat-h">Speciality</h2>
+      <ul class="menu">
+        <li data-img="assets/img/cut-v60.webp"><b>V60 pour-over</b><span>Hot / iced</span><em>260</em></li>
+        <li><b>Kalita pour-over</b><span>Hot / iced</span><em>260</em></li>
+        <li><b>Aeropress</b><em>260</em></li>
+        <li><b>French press</b><em>260</em></li>
+        <li><b>Cold brew</b><span>Coarse ground, steeped twenty four hours.</span><em>245</em></li>
+      </ul>
+    </section>
+    <section class="mcat" id="cold">
+      <h2 class="mcat-h">Cold</h2>
+      <ul class="menu">
+        <li><b>Vietnamese iced coffee</b><em>315</em></li>
+        <li><b>Espresso &amp; tonic</b><em>275</em></li>
+        <li><b>Frapp&eacute;</b><em>280</em></li>
+        <li data-img="assets/img/cut-matcha.webp"><b>Iced matcha green latt&eacute;</b><em>300</em></li>
+        <li><b>Ice tea</b><span>Peach / lemon</span><em>230</em></li>
+        <li><b>Mojito</b><span>Lemon / orange</span><em>225 / 280</em></li>
+        <li><b>Watermelon mojito</b><em>280</em></li>
+        <li><b>Iced matcha frapp&eacute;</b><em>300</em></li>
+        <li><b>Orange matcha</b><em>300</em></li>
+        <li><b>Nutella frapp&eacute;</b><em>310</em></li>
+      </ul>
+    </section>
+    <section class="mcat" id="tea">
+      <h2 class="mcat-h">Tea</h2>
+      <ul class="menu">
+        <li><b>Black / green / cinnamon</b><em>165</em></li>
+        <li><b>Hot matcha green latt&eacute;</b><em>245</em></li>
+        <li><b>Honey ginger lemon tea</b><em>215</em></li>
+      </ul>
+    </section>
+    <section class="mcat mcat-add" id="add-ons" data-reveal>
+      <h2 class="mcat-h">Add to any of it</h2>
+      <div class="cols">
+        <ul class="dotlist">
+          <li><b>Whipped cream</b><em></em><b>80</b></li>
+          <li><b>Cold foam</b><em></em><b>40</b></li>
+          <li><b>Flavours</b><em></em><b>40</b></li>
+        </ul>
+        <ul class="dotlist">
+          <li><b>Soy milk</b><em></em><b>45</b></li>
+          <li><b>Oat milk</b><em></em><b>150</b></li>
+          <li><b>Almond milk</b><em></em><b>150</b></li>
+          <li><b>Lactose free</b><em></em><b>35</b></li>
+        </ul>
+      </div>
+      <p class="spec">Flavours: jaggery, hazelnut, vanilla, caramel, irish. All prices in rupees.</p>
+    </section>
+  </div>
+</div>
+</main>
+<div class="marquee" aria-hidden="true">
+  <div class="mq-track"><span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b><span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b></div>
+</div>
+<footer>
+  <div class="giant" aria-hidden="true">Doubleshot</div>
+  <div class="foot-grid">
+    <div>
+      <span class="foot-mark" data-ds-mark="view" aria-hidden="true"></span>
+      <p>Sourcing, roasting and brewing in Punjab.<br>100% eggless artisanal bakery &amp; savoury.</p>
+    </div>
+    <div>
+      <h2>Visit</h2>
+      <a href="locations.html">Amritsar</a>
+      <a href="locations.html">Mohali</a>
+      <a href="locations.html">Jalandhar</a>
+      <a href="locations.html">Chandigarh (opening soon)</a>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="fl">SCO 49, B Block, District Shopping Centre, Ranjit Avenue, Amritsar 143001</div>
+</footer>
+<script defer src="assets/liquid.js?v=1789759582"></script>
+<script defer src="assets/velocity.js?v=1789759582"></script>
+<script defer src="assets/order.js?v=1789759582"></script>
+<script defer src="assets/mnav.js?v=1789759582"></script>
+<script defer src="assets/donut.js?v=1789759582"></script>
+<script defer src="assets/site.js?v=1789759582"></script>
+</body>
+</html>

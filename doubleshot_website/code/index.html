@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DOUBLESHOT Coffee Roasters</title>
+<meta name="description" content="Doubleshot Coffee Roasters: sourcing, roasting and brewing in Amritsar, Mohali and Jalandhar, with a 100% eggless bakery and savoury menu." />
+<meta name="theme-color" content="#0A2111" />
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=1789759610">
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
+</script>
+<style>
+:root{
+  /* Sampled from the film, not chosen by eye. The footage's own settled
+     background green is #0A2111 (hue 138). The Roadster board's forest is
+     #1E3A28 (hue 141) - three degrees apart, i.e. the same green lifted. So
+     the ground IS the film's green and the raised surface is Roadster's.
+     Camel is the crema family (footage crema hue 24, camel 36). */
+  --ink:#0A2111;               /* page ground = the footage's own green */
+  --charcoal:#1E3A28;          /* raised surface = Roadster forest */
+  --warm-white:#F1EDE4;        /* bone */
+  --warm-white-dim:#C9C4B6;
+  --concrete:#C9C4B6;
+  --concrete-dim:#B2BCB0;      /* green-tinted tertiary, lifted for legibility */
+  --stone:#6B5F4E;
+  --accent:#C6A472;            /* camel, used sparingly - it is the crema */
+  --accent-glow:#C6A472;
+  --sunset:#C6A472;
+  --forest:#1E3A28;
+  --display:'Zodiak','Cabinet Grotesk',Georgia,serif;   /* WORDMARK ONLY */
+  --heading:'Cabinet Grotesk','Switzer',-apple-system,sans-serif;
+  --body:'Switzer',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--ink);color:var(--warm-white);font-family:var(--body);}
+body{overflow-x:hidden}
+a{color:inherit}
+
+/* ---------- ambient layers ---------- */
+.grain{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.vignette{position:fixed;inset:0;z-index:99;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(11,14,11,.55) 100%);}
+#particles{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:.4}
+
+/* Custom cursors removed: accessibility-hostile, perf-hostile, and one of the
+   clearest tells of an AI-generated page. Native cursor stays. */
+
+
+/* ---------- nav ----------
+   Measured off award-winning sites in this space: fixed, transparent at rest,
+   shrinks on scroll, and hides upward on scroll-down / returns on scroll-up so
+   it never competes with the footage. No mega-menu, no announcement bar. */
+#nav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;
+  justify-content:space-between;padding:2.6vw 4.63vw;pointer-events:none;
+  transition:top .3s ease,padding .5s ease,background .5s ease;
+  background:linear-gradient(180deg,rgba(20,16,14,.55),transparent)}
+#nav.deep{padding:1.4vw 4.63vw;background:rgba(20,16,14,.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#nav.hide{top:-9vw}
+#nav a{pointer-events:auto;text-decoration:none}
+.wordmark{font-family:var(--display);font-weight:700;font-size:clamp(15px,1.35vw,21px);
+  letter-spacing:-.03em;color:var(--warm-white)}
+#nav nav{display:flex;align-items:center;gap:clamp(18px,2.2vw,38px);pointer-events:auto}
+#nav nav a{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--warm-white-dim);transition:color .3s}
+#nav nav a:hover{color:var(--warm-white)}
+#nav nav a.cta{color:var(--accent)}
+/* direct children only (handoff gotcha): the descendant form also hid the order box's links */
+@media (max-width:820px){#nav nav > a:not(.cta){display:none}}
+
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:9999;background:var(--ink);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  transition:opacity .9s ease,filter .9s ease;}
+#loader.done{opacity:0;filter:blur(8px);pointer-events:none}
+.loader-mark{font-family:var(--display);font-size:clamp(20px,2.4vw,30px);font-weight:300;
+  letter-spacing:.42em;text-transform:uppercase;color:var(--warm-white);padding-left:.42em}
+.loader-rule{width:54px;height:1px;background:rgba(244,240,234,.22)}
+.loader-bar{width:140px;height:1.5px;background:rgba(244,240,234,.12);overflow:hidden}
+.loader-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--sunset));transition:width .25s}
+.loader-pct{font-size:12px;letter-spacing:.24em;color:var(--concrete-dim)}
+
+/* ---------- stage ---------- */
+/* 640vh (was 800): research found the film sat ~8 screens deep before any of the
+   brand's own content; the dwell engine is proportional, so beats keep their weight. */
+#anim{position:relative;height:640vh}
+/* 100lvh, not 100dvh: dvh changes continuously while a phone's address bar slides, which
+   re-laid out the whole film stage every frame of the scroll */
+#sticky{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:var(--ink);isolation:isolate}
+#canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+/* Copy has to survive a bright, busy frame — the single most common reason a
+   good film reads as unusable. Scrim carries further right and darker. */
+.grad-left{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.16) 30%,transparent 56%)}
+.grad-bottom{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(0deg,rgba(10,33,17,.42) 0%,transparent 24%)}
+#tint{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.022;
+  background:linear-gradient(135deg,var(--accent),var(--forest));transition:background .8s ease,opacity .8s ease}
+
+
+/* Legibility scrim for the chapter copy. Deliberately a SIBLING of the text,
+   not a child: as a pseudo-element it was clipped by the chapter's own
+   clip-path reveal, which both hard-edged it and inflated scrollHeight. */
+#copyscrim{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .5s ease;background:radial-gradient(ellipse 56% 64% at 24% 50%,rgba(4,13,7,.82) 0%, rgba(4,13,7,.66) 40%, rgba(4,13,7,.32) 66%, transparent 86%);}
+#copyscrim.on{opacity:1}
+#copyscrim.centred{background:radial-gradient(ellipse 50% 55% at 50% 50%,rgba(4,13,7,.80) 0%, rgba(4,13,7,.55) 42%, transparent 78%);}
+
+/* ---------- scroll text ----------
+   Chapters wipe in with a clip-path inset rather than a blur-fade. A fade is
+   the web-generic default; a directional wipe on an editorial easing curve
+   reads as deliberate typesetting. */
+.st{position:fixed;z-index:10;left:4.63vw;top:50%;transform:translateY(-50%);
+  max-width:clamp(280px,28vw,440px);opacity:0;pointer-events:none;
+  clip-path:inset(0 0 100% 0);
+  max-height:90dvh;overflow:hidden;
+  /* Outgoing chapter clears FAST; incoming is delayed to match. Equal-rate
+     crossfades in the same position stack two headings on top of each other
+     mid-transition, which reads as broken. */
+  transition:clip-path .8s cubic-bezier(.16,1,.3,1),opacity .22s ease;}
+
+.st h1,.st h2,.st p,.st .tagline,.st .overline,.st .spec,
+.st .menu b,.st .menu span,.st .menu em,.st .flist li,.st .flist li i,
+.st .dotlist li,.st .dotlist b,.st .quote,.st .attrib{
+  text-shadow:0 1px 2px rgba(0,0,0,.62), 0 2px 22px rgba(0,0,0,.78)}
+.st .menu li,.st .flist li,.st .dotlist li{border-color:rgba(241,237,228,.20)}
+.st .menu em{color:var(--warm-white)}
+.st .menu em::before{color:var(--accent);opacity:.75}
+.st.visible{opacity:1;clip-path:inset(0 0 0 0);pointer-events:auto;
+  transition:clip-path .95s cubic-bezier(.16,1,.3,1),opacity .5s ease .22s;}
+.st.center{left:50%;transform:translate(-50%,-50%);text-align:center;max-width:min(560px,80vw)}
+.overline{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;line-height:1.3}
+/* Film first: the overlay is set like credits, not like a landing page.
+   Headings dropped roughly 40%, body to caption size, so the footage carries
+   the frame and the type is read second. */
+.st h1{font-family:var(--display);font-weight:700;font-size:clamp(2.25rem,4.6vw,4.25rem);
+  line-height:.92;margin:0 0 14px;letter-spacing:-.05em}
+.st h2{font-family:var(--heading);font-weight:500;font-size:clamp(1.5rem,2.4vw,2.25rem);
+  line-height:1;margin:0 0 12px;letter-spacing:-.04em}
+.st p{font-weight:400;font-size:15px;line-height:1.55;letter-spacing:-.01em;color:var(--warm-white-dim);
+  margin:0 0 12px;max-width:34ch}
+/* Key shots (logo pour, splash): a single low caption, bottom-left, no scrim,
+   so nothing sits over the cup. */
+.st.low{top:auto;bottom:9vh;transform:none;max-width:clamp(260px,24vw,380px)}
+.st.low h2{font-size:clamp(1.15rem,1.6vw,1.5rem);margin-bottom:8px}
+.st.low p{font-size:14px;margin-bottom:10px}
+.st .textlinks{display:flex;gap:22px;margin-top:4px}
+.st .textlinks a{font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;color:var(--warm-white);border-bottom:1px solid rgba(241,237,228,.35);padding-bottom:3px}
+.st .textlinks a:hover{border-color:var(--warm-white)}
+.tagline{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--concrete-dim)}
+/* Char-level MASK reveal: each character rises out of a hidden box rather
+   than fading in. Descender clearance handled with padding on the word. */
+.split .word{display:inline-block;overflow:hidden;padding-bottom:.12em;
+  margin-bottom:-.12em;vertical-align:top}
+.split .char{display:inline-block;transform:translateY(110%);
+  transition:transform .95s cubic-bezier(.16,1,.3,1)}
+.st.visible .split .char{transform:translateY(0)}
+
+/* The 28vw cap governs PARAGRAPH measure, not display type. The hero wordmark
+   needs its own room, and split characters must never break inside a word. */
+.split .word{white-space:nowrap}
+.st[data-chap="0"]{max-width:min(58vw,820px)}
+.st[data-chap="0"] p{max-width:34ch}
+.st h1{max-width:none}
+
+
+/* glass */
+/* No backdrop-filter: decorative glass is an absolute ban. Hairline rules
+   and negative space carry the grouping instead. */
+.glass{background:transparent;border:0;transition:opacity .35s}
+.glass:hover{background:transparent}
+.spec{margin-top:26px;padding-top:16px;border-top:1px solid rgba(232,223,211,.16);
+  font-size:13px;letter-spacing:.04em;color:var(--concrete-dim)}
+.quote-mark{font-family:var(--heading);font-size:88px;line-height:.7;color:var(--accent);opacity:.5}
+.quote{font-family:var(--heading);font-style:italic;font-weight:300;
+  font-size:clamp(24px,2.9vw,38px);line-height:1.36;margin:14px 0 22px}
+.rule{width:56px;height:1px;background:var(--accent);margin:20px 0}
+.attrib{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--concrete-dim)}
+
+.flist{list-style:none;padding:0;margin:22px 0 0}
+.flist li{display:flex;gap:14px;align-items:baseline;padding:13px 0;
+  border-top:1px solid rgba(244,240,234,.07);font-size:14px;font-weight:300;color:var(--warm-white-dim)}
+.flist li i{font-style:normal;color:var(--accent);font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;min-width:76px}
+
+.menu{list-style:none;padding:0;margin:24px 0 0}
+.menu li{display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:baseline;
+  padding:13px 0;border-top:1px solid rgba(232,223,211,.13)}
+.menu li:last-child{border-bottom:1px solid rgba(232,223,211,.13)}
+.menu b{grid-column:1;grid-row:1;font-weight:500;font-size:15px;color:var(--warm-white)}
+.menu span{grid-column:1;grid-row:2;font-size:13px;font-weight:300;line-height:1.5;color:var(--concrete-dim)}
+.menu em{grid-column:2;grid-row:1;justify-self:end;font-style:normal;font-size:13px;font-weight:500;color:var(--accent);
+  font-variant-numeric:tabular-nums}
+.menu em::before{content:'₹';opacity:.5;margin-right:1px}
+
+.dotlist{list-style:none;padding:0;margin:22px 0 0}
+.dotlist li{display:flex;align-items:baseline;gap:10px;padding:11px 0;font-size:13px;
+  font-weight:300;color:var(--warm-white-dim)}
+.dotlist li em{flex:1;border-bottom:1px dotted rgba(244,240,234,.18);font-style:normal}
+.dotlist li b{font-weight:400;color:var(--warm-white)}
+
+.btns{display:flex;gap:12px;justify-content:center;margin:28px 0 26px;flex-wrap:wrap}
+.btn{padding:14px 30px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  border:1px solid var(--accent);cursor:pointer;transition:.3s;background:var(--accent);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--warm-white)}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.985)}
+.card{display:inline-block;padding:18px 26px;border-radius:2px;text-align:left}
+.card b{display:block;font-family:var(--heading);font-weight:400;font-size:15px}
+.card span{display:block;margin-top:5px;font-size:12px;color:var(--concrete-dim)}
+
+/* ---------- chapter markers ---------- */
+#chapters{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none;
+  transition:opacity .5s ease}
+.chap{display:flex;flex-direction:column;align-items:center}
+.chap .dot{width:5px;height:5px;border-radius:50%;background:rgba(244,240,234,.22);transition:.4s}
+.chap.on .dot{background:var(--accent);transform:scale(1.6)}
+.chap .line{width:1px;height:34px;background:rgba(244,240,234,.14);position:relative}
+.chap .line::after{content:'';position:absolute;inset:0 0 auto 0;height:0;background:var(--accent);transition:height .3s}
+.chap.done .line::after{height:100%}
+/* 2026-09-13: phones keep the chapter progress too (was hidden), tucked to the edge */
+@media (max-width:820px){#chapters{right:10px}.chap .line{height:22px}}
+
+
+/* ---------- parallax + magnetic ---------- */
+.btn{will-change:transform}
+.mag{display:inline-block;will-change:transform}
+
+/* ---------- beat 1: the sentence ----------
+   Pulled up over the last 45vh of the pinned stage. The top of the section is
+   transparent and darkens to the ground, so the line rises into the final
+   frame of the film rather than arriving after a hard cut. pointer-events off
+   so the Visit chapter's buttons stay clickable underneath the clear part. */
+#runs{position:relative;z-index:20;margin-top:-45vh;padding:30vh var(--pad) 9vw;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,33,17,0) 0,rgba(10,33,17,.86) 24vh,var(--ink) 40vh)}
+.runs-line{font-family:var(--heading);font-weight:700;font-size:clamp(2.4rem,6.2vw,6.6rem);
+  line-height:.9;letter-spacing:-.06em;margin:0;color:var(--warm-white)}
+.runs-line .split{display:block}
+.runs-sub{margin:3.2vw 0 0;max-width:36ch;font-size:16px;line-height:1.55;letter-spacing:-.02em;
+  color:var(--warm-white-dim);opacity:0;transform:translateY(18px);
+  transition:opacity .9s ease .5s,transform .9s cubic-bezier(.16,1,.3,1) .5s}
+#runs.in .split .char{transform:translateY(0)}
+#runs.in .runs-sub{opacity:1;transform:none}
+/* 2026-09-13: the mural runner beside the line was removed (client: "I do not like the
+   person ... in the upper part there will be nothing") */
+
+/* ---------- beat 2: the three acts ----------
+   Zig-zag split, not a card grid. Motion is deliberately quiet next to the
+   film: one rise on entry and a 0.12-depth drift on the photo, nothing else.
+   Photos are 720px sources, so the figure is capped near 30vw to stay sharp. */
+#acts{position:relative;z-index:20;background:var(--ink);padding:3vw var(--pad) 12vw;
+  display:flex;flex-direction:column;gap:9vw}
+.act{display:grid;grid-template-columns:minmax(0,min(30vw,58vh)) minmax(0,1fr);gap:7vw;align-items:center;
+  opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1.1s cubic-bezier(.16,1,.3,1)}
+.act.in{opacity:1;transform:none}
+.act.flip{grid-template-columns:minmax(0,1fr) minmax(0,min(30vw,58vh))}
+.act.flip figure{order:2}
+.act.flip .act-copy{justify-self:end}
+.act figure{margin:0;overflow:hidden;aspect-ratio:4/5;background:var(--charcoal)}
+.act img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.12);will-change:transform}
+.act h3{font-family:var(--heading);font-weight:500;font-size:clamp(1.3rem,1.9vw,1.8rem);
+  letter-spacing:-.04em;line-height:1;margin:0 0 1.4vw;color:var(--warm-white-dim)}
+.act .fig{font-family:var(--heading);font-weight:800;font-size:clamp(2.2rem,4.4vw,4.6rem);
+  letter-spacing:-.06em;line-height:.9;margin:0 0 2vw;color:var(--warm-white)}
+.act-copy p:not(.fig){max-width:36ch;font-size:16px;line-height:1.55;letter-spacing:-.02em;
+  color:var(--warm-white-dim);margin:0}
+/* Polish: text links keep their hairline look but get a 44px hit area, and
+   keyboard users get a visible focus ring. */
+/* .act-link now lives in site.css (shared with the inner pages) */
+.st .textlinks a{position:relative}
+.st .textlinks a::after{content:'';position:absolute;inset:-14px -8px}
+a:focus-visible{outline:1px solid var(--accent);outline-offset:5px}
+@media (max-width:820px){
+  #runs{margin-top:-30vh;padding-top:22vh}
+  .act,.act.flip{grid-template-columns:1fr;gap:7vw}
+  .act.flip figure{order:0}
+  .act.flip .act-copy{justify-self:start}
+  .act figure{max-width:78vw}
+  .runs-sub,.act-copy p:not(.fig){font-size:16px}
+  /* Must out-specify .st[data-chap="0"], or the hero copy gets crammed into
+     58vw on a phone. Everything goes near-full-bleed below 820px. */
+  .st, .st[data-chap="0"], .st.center{max-width:88vw;left:6vw}
+  .st.center{left:50%;max-width:86vw}
+  .menu li{gap:2px 10px}
+  .dotlist li{font-size:12.5px}
+  #nav{padding:5vw 6vw}
+  #nav.deep{padding:3.5vw 6vw}
+}
+
+/* ---------- the house: the client's own photography ----------
+   Asymmetric 12-col composition with deliberate overlap, never an equal grid.
+   Motion: each image wipes open upward (clip-path) on entry, then drifts at
+   ~0.08 depth. Hover brightens the photo and lifts the caption; nothing moves
+   position, so the page never feels like it is sliding under the cursor. */
+/* overflow-x:clip: the 3D-turned bakery cut-outs poked 10px past a phone edge in WebKit; iOS
+   Safari ignores overflow-x on body, so the section clips its own (clip = no scroll box) */
+#house{position:relative;z-index:20;background:var(--ink);padding:2vw var(--pad) 12vw;overflow-x:clip}
+.house-head{max-width:600px;margin:0 0 6vw}
+.house-head h2{font-family:var(--heading);font-weight:500;font-size:clamp(1.8rem,3.4vw,3.4rem);
+  line-height:.95;letter-spacing:-.05em;margin:0 0 1.8vw;color:var(--warm-white)}
+.hsplit.in .char{transform:translateY(0)}
+.house-head p,.room-copy p{max-width:40ch;font-size:16px;line-height:1.6;letter-spacing:-.01em;
+  color:var(--warm-white-dim);margin:0}
+/* The wipe lives on the IMAGE, not the figure: Chrome's IntersectionObserver
+   honours the target's own clip-path, so a figure clipped to nothing never
+   reports as visible and never reveals. The figure stays observable. */
+.ph{margin:0;position:relative;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.14);
+  clip-path:inset(100% 0 0 0);filter:brightness(.84) saturate(.94);will-change:transform;
+  transition:clip-path 1.4s cubic-bezier(.77,0,.18,1),filter .9s cubic-bezier(.16,1,.3,1)}
+.ph.in img{clip-path:inset(0 0 0 0)}
+.ph:hover img{filter:brightness(1) saturate(1)}
+.ph figcaption{position:absolute;left:18px;bottom:16px;font-size:12px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--warm-white);text-shadow:0 1px 14px rgba(0,0,0,.7);
+  opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1)}
+.ph:hover figcaption{opacity:1;transform:none}
+@media (hover:none){.ph figcaption{opacity:1;transform:none}.ph img{filter:brightness(.94)}}
+.bake{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2vw;margin-bottom:12vw}
+.ph-a{grid-column:1/6;grid-row:1/3;aspect-ratio:4/5}
+.ph-b{grid-column:7/11;grid-row:1;aspect-ratio:3/4;margin-top:10vw}
+.ph-c{grid-column:9/13;grid-row:2;aspect-ratio:4/5;margin-top:-4vw}
+.room{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2vw}
+.ph-wide{grid-column:1/10;grid-row:1;aspect-ratio:1050/740}
+.ph-inset{grid-column:9/13;grid-row:1;align-self:end;aspect-ratio:4/5;margin-bottom:-8vw;z-index:2}
+.room-copy{grid-column:1/7;grid-row:2;margin-top:6vw}
+.room-copy h3{font-family:var(--heading);font-weight:500;font-size:clamp(1.3rem,1.9vw,1.8rem);
+  letter-spacing:-.04em;line-height:1;margin:0 0 1.2vw;color:var(--warm-white)}
+@media (max-width:820px){
+  .bake,.room{grid-template-columns:1fr 1fr;gap:3vw}
+  .ph-a{grid-column:1/3;grid-row:auto}
+  .ph-b{grid-column:1/2;grid-row:auto;margin-top:0}
+  .ph-c{grid-column:2/3;grid-row:auto;margin-top:12vw}
+  .ph-wide{grid-column:1/3}
+  .ph-inset{grid-column:2/3;grid-row:auto;margin:-14vw 0 0}
+  .room-copy{grid-column:1/3;grid-row:auto}
+  .house-head p,.room-copy p{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){.ph img{clip-path:none;transition:none}}
+
+/* ======================================================================
+   Signature sections (research: RESEARCH-2026-09-10.md)
+   ====================================================================== */
+
+/* Marquee: the brand's own tagline as a moving band (Binocle / Onyx ticker).
+   Speed and direction follow scroll velocity via the Web Animations API. */
+.marquee{position:relative;z-index:20;background:var(--ink);overflow:hidden;padding:2.2vw 0;
+  border-top:1px solid rgba(241,237,228,.12);border-bottom:1px solid rgba(241,237,228,.12)}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-track span{font-family:var(--heading);font-weight:500;font-size:clamp(1.3rem,2.6vw,2.5rem);
+  letter-spacing:-.035em;line-height:1;color:var(--warm-white);padding:0 .45em;white-space:nowrap}
+.mq-track span.dim{color:rgba(241,237,228,.55)}   /* .34 measured 2.81:1 */
+.mq-track b{font-family:var(--heading);font-weight:300;font-size:clamp(1.3rem,2.6vw,2.5rem);line-height:1;color:var(--accent);opacity:.8}
+
+/* What we pour: pinned list, one cut-out per drink (Awwwards list-reveal pattern).
+   Drinks are cut out of their backgrounds so every shot sits on the same green. */
+#pour{position:relative;z-index:20;background:var(--ink)}
+.pour-pin{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;
+  gap:4vw;padding:0 var(--pad);position:relative;overflow:hidden}
+.pour-kicker{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 3vh}
+.pour-list ol{list-style:none;margin:0;padding:0;border-top:1px solid rgba(241,237,228,.12)}
+.pour-list li{display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:2.2vh 0;
+  border-bottom:1px solid rgba(241,237,228,.12);color:rgba(241,237,228,.55);
+  transition:color .6s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+.pour-list .nm{display:inline-block;font-family:var(--heading);font-weight:500;font-size:clamp(1.25rem,2vw,2rem);
+  letter-spacing:-.04em;line-height:1;transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.pour-list .pr{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* Only the name slides, so the row's hairline stays put. */
+.pour-list li.on{color:var(--warm-white)}
+.pour-list li.on .nm{transform:translateX(18px)}
+.pour-list li.on .pr{color:var(--accent)}
+.pour-list .act-link{margin-top:4vh}
+.pour-bar{position:absolute;left:calc(var(--pad) * .45);top:24vh;bottom:24vh;width:1px;background:rgba(241,237,228,.12)}
+.pour-bar i{display:block;width:100%;height:100%;background:var(--accent);transform-origin:top;transform:scaleY(0)}
+.pour-stage{position:relative;height:80vh}
+.pour-stage::before{content:'';position:absolute;left:50%;top:46%;width:58vh;height:58vh;border-radius:50%;
+  transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(198,164,114,.15) 0%,rgba(198,164,114,0) 68%)}
+.cut{position:absolute;inset:0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(70px) scale(.94) rotate(-3deg);pointer-events:none;
+  transition:opacity .7s ease,transform 1.15s cubic-bezier(.16,1,.3,1)}
+.cut.on{opacity:1;transform:none}
+.cut.past{opacity:0;transform:translateY(-70px) scale(.96) rotate(3deg)}
+.cut img{max-height:52vh;max-width:100%;width:auto;height:auto;display:block;
+  filter:brightness(.88) drop-shadow(0 42px 46px rgba(0,0,0,.55))}
+.cut figcaption{margin-top:2.4vh;font-size:14px;line-height:1.5;color:var(--warm-white-dim);max-width:36ch;text-align:center}
+
+/* The bakery: three cut-outs at different heights. Product only, whole, no hands
+   (client, 2026-09-10: the glove and the hand read as the shape, not the food).
+   GSAP owns motion: .spin takes the scroll turn, the img the cursor tilt. */
+.cutrow{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2vw;align-items:end}
+.cutfig{margin:0;text-align:center;opacity:0;transform:translateY(90px);
+  transition:opacity 1s ease,transform 1.4s cubic-bezier(.16,1,.3,1)}
+.cutfig.in{opacity:1;transform:none}
+.cutfig .spin{will-change:transform}
+.cutfig img{width:auto;max-width:100%;max-height:46vh;height:auto;margin:0 auto;display:block;filter:drop-shadow(0 38px 40px rgba(0,0,0,.5));will-change:transform}
+.cutfig figcaption{margin-top:1.6vw;font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--warm-white-dim)}
+.cf-a{grid-column:1/5}
+.cf-b{grid-column:6/9;align-self:start;transition-delay:.12s}
+.cf-c{grid-column:9/13;margin-bottom:5vw;transition-delay:.24s}
+@keyframes float{from{transform:translateY(0) rotate(-.6deg)}to{transform:translateY(-14px) rotate(.6deg)}}
+
+/* Step inside: Codrops-style layered zoom. Six copies of the storefront nest
+   inside each other; scrolling rushes them outward, the room dims, and the
+   interior takes over. The frame and layers only ever use transform/opacity.
+   2026-09-10: the frame is full-bleed and the section OPENS on one sharp photo
+   (client: the stacked translucent copies read as blur, and green showed round
+   the frame). The nested copies stay hidden until the scroll starts. */
+#step{position:relative;z-index:20;background:var(--ink)}
+.step-pin{height:100vh;position:relative;overflow:hidden;background:var(--ink)}
+.step-frame{position:absolute;inset:0;will-change:transform}
+.lyr{position:absolute;inset:0;background:url("assets/img/room-storefront.webp") center/cover;
+  filter:brightness(.8) saturate(.95);will-change:transform,opacity}
+.lyr:not(:first-child){opacity:0;box-shadow:0 0 0 1px rgba(241,237,228,.14),0 20px 60px rgba(0,0,0,.45)}
+.step-word{position:absolute;top:50%;font-family:var(--heading);font-weight:700;font-size:clamp(2.6rem,6.8vw,7.4rem);
+  letter-spacing:-.06em;line-height:.85;color:var(--warm-white);transform:translateY(-50%);pointer-events:none;
+  text-shadow:0 2px 40px rgba(0,0,0,.45);will-change:transform,opacity}
+.step-l{right:50%;padding-right:.1em}
+.step-r{left:50%;padding-left:.1em}
+.step-dim{position:absolute;inset:0;background:var(--ink);opacity:0;pointer-events:none}
+.step-in{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;
+  gap:6vw;padding:0 var(--pad);opacity:0}
+.step-in figure{margin:0;justify-self:end;width:min(30vw,56vh);aspect-ratio:640/756;overflow:hidden}
+.step-in img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.9)}
+.step-copy h3{font-family:var(--heading);font-weight:500;font-size:clamp(1.7rem,2.9vw,2.8rem);letter-spacing:-.05em;
+  line-height:.95;margin:0 0 2vh;color:var(--warm-white)}
+.step-copy p{max-width:38ch;font-size:16px;line-height:1.6;color:var(--warm-white-dim);margin:0}
+/* Photo wall: a 3x3 grid whose cells have the viewport's own aspect (28vw x 28vh), so
+   scaling the grid by 100/28 leaves the centre cell exactly full-bleed and identical to
+   the first .lyr underneath (same image, same center/cover, same filter). The centring
+   uses the individual `translate` property so GSAP's scale composes with it. Shown only
+   when JS arms it (.on), so a failed CDN never leaves a static wall over the section. */
+.wall{display:none;position:absolute;inset:0;z-index:5;background:var(--ink);pointer-events:none;overflow:hidden}
+.wall.on{display:block}
+.wall-grid{position:absolute;left:50%;top:50%;translate:-50% -50%;display:grid;
+  grid-template-columns:repeat(3,28vw);grid-template-rows:repeat(3,28vh);gap:2.4vh 2.4vw}
+.wc{margin:0;overflow:hidden;background:var(--charcoal)}
+.wc img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.82) saturate(.92)}
+.wc-c{background:url("assets/img/room-storefront.webp") center/cover;filter:brightness(.8) saturate(.95)}
+
+/* Closing wordmark set edge to edge (Sons & Daughters). JS fits it to width. */
+.giant{flex:1 0 100%;font-family:var(--display);font-weight:700;font-size:17vw;line-height:.82;letter-spacing:-.05em;
+  color:var(--warm-white);white-space:nowrap;overflow:hidden;padding-bottom:.08em;margin:0 0 4vw}
+.giant.in .char{transform:translateY(0)}
+
+@media (max-width:820px){
+  .pour-pin{grid-template-columns:1fr;grid-template-rows:44vh auto;align-content:center;gap:2vh}
+  .pour-stage{height:44vh;order:-1}
+  .cut img{max-height:34vh}
+  .cut figcaption{font-size:13px;margin-top:1.2vh}
+  .pour-list li{padding:1.3vh 0}
+  .pour-list .nm{font-size:1.3rem}
+  .pour-kicker{margin-bottom:1.4vh}
+  .pour-list .act-link{margin-top:2vh}
+  .pour-bar{display:none}
+  .cutrow{grid-template-columns:1fr 1fr;gap:4vw}
+  .cf-a{grid-column:1/3}
+  .cf-b{grid-column:1/2;margin:0}
+  .cf-c{grid-column:2/3;margin:10vw 0 0}
+  .step-in{grid-template-columns:1fr;align-content:center;gap:4vh}
+  .step-in figure{justify-self:start;width:58vw}
+}
+@media (prefers-reduced-motion:reduce){.cutfig img{animation:none}}
+
+
+/* ---------- living logo in the loader ---------- */
+.loader-logo{width:clamp(58px,6vw,86px)}
+/* ---------- Instagram strip (real posts) ---------- */
+#ig{position:relative;z-index:20;background:var(--ink);padding:8vw var(--pad) 10vw}
+.ig-head{display:flex;justify-content:space-between;align-items:baseline;gap:4vw;margin:3vw 0 3.5vw}
+.ig-head h2{font-family:var(--heading);font-weight:500;font-size:clamp(1.8rem,3.4vw,3.4rem);letter-spacing:-.05em;
+  line-height:.95;margin:0;color:var(--warm-white)}
+.ig-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.4vw;align-items:start}
+.ig-tile{display:block;aspect-ratio:1;overflow:hidden;background:var(--charcoal)}
+.ig-tile:nth-child(even){margin-top:4vw}
+.ig-tile img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.88);transition:filter .6s ease}
+.ig-tile:hover img{filter:brightness(1)}
+@media (max-width:820px){
+  .ig-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2vw}
+  .ig-tile:nth-child(even){margin-top:6vw}
+  .ig-head{flex-direction:column;gap:2vw}
+}
+
+footer{padding:6vw 4.63vw;background:#12291A;display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:14px}
+footer .fm{font-family:var(--display);font-size:16px;letter-spacing:.3em;text-transform:uppercase}
+footer .fl{font-size:12px;letter-spacing:.12em;color:var(--concrete-dim)}
+
+/* Short viewports: the overlay copy must never overflow the sticky stage. */
+@media (max-height:760px){
+  .st h1{font-size:clamp(30px,4.4vh,52px);margin-bottom:8px}
+  .st h2{font-size:clamp(22px,3.4vh,36px);margin-bottom:8px}
+  .st p{font-size:13px;line-height:1.5;margin-bottom:6px}
+  .overline{margin-bottom:10px;font-size:12px}
+  .flist{margin-top:12px}
+  .menu{margin-top:12px}
+  .spec{margin-top:14px;padding-top:10px}
+  .rule{margin:12px 0}
+  .dotlist{margin-top:12px}
+  .flist li{padding:8px 0;font-size:12.5px}
+  .menu li{padding:9px 0}
+  .menu b{font-size:13px}
+  .menu span{font-size:12px}
+  .dotlist li{padding:7px 0;font-size:12px}
+  .quote{font-size:clamp(18px,3.2vh,28px)}
+  .quote-mark{font-size:58px}
+}
+@media (max-height:560px){
+  .st p{display:none}
+  .st h1{font-size:clamp(26px,5vh,40px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #particles{display:none}
+  .st{transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="loader">
+  <div class="loader-logo" id="lmark" aria-hidden="true"></div>
+  <div class="loader-mark">Doubleshot</div>
+  <div class="loader-pct" id="lpct">0%</div>
+</div>
+<script src="assets/logo-paths.js?v=1789069000"></script>
+<script src="assets/logo.js?v=1789069000"></script>
+<script>window.__lmark = window.DSMark ? DSMark.mount(document.getElementById('lmark'), { mode: 'progress' }) : null;</script>
+
+<header id="nav">
+  <a class="wordmark" href="index.html" data-no-swup><span class="nav-mark" data-ds-mark="load" aria-hidden="true"></span>Doubleshot</a>
+  <nav>
+    <a href="menu.html">Menu</a>
+    <a href="bakery.html">Bakery</a>
+    <a href="roastery.html">Roastery</a>
+    <a href="locations.html">Locations</a>
+    <!-- 2026-09-12: real order links (same block as build_pages.py NAV; keep in sync) -->
+    <details class="order">
+      <summary>Order <b>Zomato</b><i>/</i><b>Swiggy</b></summary>
+      <div class="order-pop">
+        <p class="op-k">Order from</p>
+        <div class="op-choose">
+          <button type="button" data-op="zomato"><b>Zomato</b><span>Delivery from five cafés</span></button>
+          <button type="button" data-op="swiggy"><b>Swiggy</b><span>Book a table (Dineout)</span></button>
+        </div>
+        <div class="op-sec" data-op-sec="zomato">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Zomato</h3>
+          <ul class="op-list">
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-1-ranjit-avenue/order" target="_blank" rel="noopener">Ranjit Avenue <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-kabir-park/order" target="_blank" rel="noopener">Kabir Park <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-gt-road/order" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/chandigarh/doubleshot-coffee-roasters-sector-78-mohali/order" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+            <li><a href="https://www.zomato.com/jalandhar/doubleshot-coffee-roasters-3-model-town/order" target="_blank" rel="noopener">Model Town <span>Jalandhar</span></a></li>
+          </ul>
+        </div>
+        <div class="op-sec" data-op-sec="swiggy">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Swiggy</h3>
+          <ul class="op-list">
+            <li><a href="https://www.swiggy.com/restaurants/amritsar/g-t-road/double-shot-coffee-roasters-680189/dineout" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.swiggy.com/restaurants/chandigarh/sector-78-mohali/doubleshot-coffee-roasters-693808/dineout" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+          </ul>
+          <p class="op-note">On Swiggy these cafés take table bookings (Dineout). For delivery, use Zomato.</p>
+        </div>
+      </div>
+    </details>
+    <!-- 2026-09-13: phones (<=820px) get every page from this button (assets/mnav.js) -->
+    <button class="mnav-btn" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open pages"><i></i><i></i></button>
+  </nav>
+</header>
+<!-- phone page list; same block as build_pages.py MNAV (keep in sync) -->
+<div class="mnav" id="mnav" hidden>
+  <nav aria-label="Pages">
+    <ol class="mnav-list">
+      <li style="--i:0"><a href="index.html"><span>Home</span></a></li>
+      <li style="--i:1"><a href="menu.html"><span>Menu</span><em>Every drink</em></a></li>
+      <li style="--i:2"><a href="bakery.html"><span>Bakery</span><em>100% eggless</em></a></li>
+      <li style="--i:3"><a href="roastery.html"><span>Roastery</span><em>On premise</em></a></li>
+      <li style="--i:4"><a href="locations.html"><span>Locations</span><em>Five caf&eacute;s</em></a></li>
+    </ol>
+    <div class="mnav-foot">
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <a class="ig" href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </nav>
+</div>
+<main id="swup" class="tfade">
+
+<div id="chapters"></div>
+
+<section id="anim">
+  <div id="sticky">
+    <canvas id="canvas"></canvas>
+    <div class="grad-left"></div>
+    <div class="grad-bottom"></div>
+    <div id="tint"></div>
+    <div id="copyscrim"></div>
+  </div>
+
+  <!-- 1 HERO -->
+  <!-- 1 HERO -->
+  <div class="st" data-chap="0">
+    <div class="overline">Amritsar &middot; Mohali &middot; Jalandhar &middot; Chandigarh</div>
+    <h1 class="split">Doubleshot</h1>
+    <div class="tagline">Sourcing &nbsp;/&nbsp; Roasting &nbsp;/&nbsp; Brewing</div>
+    <p style="margin-top:20px">Three things, done in that order, in one room.
+       Some come for the coffee. Most come back for the room it is made in.</p>
+    <p class="spec">Roasted on premise. Cherries picked by hand.</p>
+  </div>
+
+  <!-- 2 SOURCING -->
+  <div class="st" data-chap="1">
+    <div class="overline">One</div>
+    <h2>Sourcing</h2>
+    <p>The leaves and cherries engraved on our cup are not decoration. They are
+       the first half of the job. Every cherry is picked by hand, one at a time,
+       because a machine cannot tell you which ones are ready.</p>
+    <div class="rule"></div>
+    <div class="attrib">Picked by hand</div>
+  </div>
+
+  <!-- 3 ROASTING -->
+  <div class="st" data-chap="2">
+    <div class="overline">Two</div>
+    <h2>Roasting</h2>
+    <p>We roast on premise, in the same building you drink in. Small batches,
+       tasted before any of it reaches the counter.</p>
+    <ul class="flist">
+      <li><i>Roasted</i>In-house, on premise, in small batches</li>
+      <li><i>Tasted</i>Every batch, before it is served</li>
+      <li><i>Ground</i>To order, never before</li>
+    </ul>
+  </div>
+
+  <!-- 4 BREWING: sits on the finished latte-art logo, so it stays small and low -->
+  <div class="st low" data-chap="3">
+    <h2>Brewing</h2>
+    <p>Jaggery latt&eacute;, masala chai latt&eacute;, a V60 poured by hand. Forty more on the menu.</p>
+    <div class="textlinks"><a href="menu.html">The menu</a></div>
+  </div>
+
+  <!-- 5 THE BAKERY -->
+  <div class="st" data-chap="4">
+    <div class="overline">Also from this kitchen</div>
+    <h2>100% eggless</h2>
+    <p>The whole bakery and the whole savoury menu, entirely eggless. Not a
+       substitution and not a separate shelf, just how we bake, so nobody at
+       the table has to ask first.</p>
+    <div class="rule"></div>
+    <div class="attrib">Artisanal bakery &amp; savoury</div>
+  </div>
+
+  <!-- 6 VISIT -->
+  <!-- 6 VISIT: sits on the final splash, so one low caption and two text links -->
+  <div class="st low" data-chap="5">
+    <h2>Ranjit Avenue, Amritsar</h2>
+    <p>SCO 49, B Block. Every day, 9:00 to 21:00.</p>
+    <div class="textlinks"><a href="locations.html">All locations</a><a href="tel:+917743007183">Call</a></div>
+  </div>
+</section>
+
+<!-- Beat 1. The client's own line, painted on their own wall. It overlaps the
+     last stretch of the pinned stage (negative margin) so it rises INTO the
+     final frame while the pin is still releasing, instead of hard-cutting. -->
+<section id="runs">
+  <p class="runs-line"><span class="split">Amritsar runs</span> <span class="split">on Doubleshot.</span></p>
+  <p class="runs-sub">Sourcing, roasting and brewing in Punjab, and a bakery that is entirely eggless.</p>
+</section>
+
+<!-- The brand's own tagline, moving. Two copies of the run so the loop is seamless. -->
+<div class="marquee" aria-hidden="true">
+  <div class="mq-track">
+    <span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b>
+    <span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b>
+  </div>
+</div>
+
+<!-- Beat 2. The brand's own three acts, zig-zag, one figure each. Photos are
+     the client's own, from @doubleshotroasters. -->
+<section id="acts">
+  <article class="act">
+    <figure><img loading="lazy" src="assets/img/sourcing.webp" alt="Roasted coffee beans, still steaming" width="720" height="520"></figure>
+    <div class="act-copy">
+      <h3>Sourcing</h3>
+      <p class="fig">By hand</p>
+      <p>Every cherry is picked one at a time, because a machine cannot tell which ones are ready. The leaves engraved on our cup are those cherries.</p>
+    </div>
+  </article>
+  <article class="act flip">
+    <figure><img loading="lazy" src="assets/img/roasting.webp" alt="Freshly roasted beans turning in the cooling tray of our roaster" width="720" height="850"></figure>
+    <div class="act-copy">
+      <h3>Roasting</h3>
+      <p class="fig">On premise</p>
+      <p>Roasted in the same building you drink in, in small batches, and tasted before any of it reaches the counter.</p>
+    </div>
+  </article>
+  <article class="act">
+    <figure><img loading="lazy" src="assets/img/brewing.webp" alt="Water poured by hand over a V60 dripper" width="720" height="1050"></figure>
+    <div class="act-copy">
+      <h3>Brewing</h3>
+      <p class="fig">24 hours</p>
+      <p>That is how long the cold brew steeps. The V60 is poured by hand, hot or iced, for &#8377;260.</p>
+      <a class="act-link" href="menu.html">The full menu</a>
+    </div>
+  </article>
+</section>
+
+<!-- What we pour. Pinned: the list stays put while scroll steps through it, and
+     the cut-out on the right swaps to match. Real menu items and prices only. -->
+<section id="pour">
+  <div class="pour-pin">
+    <div class="pour-bar"><i></i></div>
+    <div class="pour-list">
+      <p class="pour-kicker">What we pour</p>
+      <ol>
+        <li><span class="nm">DS Tiramisu Latte</span><span class="pr">&#8377;350</span></li>
+        <li><span class="nm">Iced Matcha Latte</span><span class="pr">&#8377;300</span></li>
+        <li><span class="nm">Hot Chocolate</span><span class="pr">&#8377;290</span></li>
+      </ol>
+      <a class="act-link" href="menu.html">The full menu</a>
+    </div>
+    <div class="pour-stage">
+      <figure class="cut"><img src="assets/img/cut-tiramisu.webp" width="566" height="465" alt="DS Tiramisu Latte, cocoa-dusted cream with a biscuit on top"><figcaption>Cocoa-dusted cream and a biscuit on top. Our initials are on this one.</figcaption></figure>
+      <figure class="cut"><img src="assets/img/cut-matcha.webp" width="423" height="713" alt="Iced matcha latte poured in layers over milk"><figcaption>Matcha over cold milk, poured in layers.</figcaption></figure>
+      <figure class="cut"><img src="assets/img/cut-hotchoc.webp" width="690" height="565" alt="Hot chocolate with whipped cream and cocoa"><figcaption>Whipped cream, a heavy hand with the cocoa.</figcaption></figure>    </div>
+  </div>
+</section>
+
+<!-- The bakery: the client's own shots, cut out of their backgrounds so every
+     item sits on the same green (Sunbeam's treatment). -->
+<div class="steam-rule sr-house" data-ds-mark="view" data-part="steam" aria-hidden="true"></div>
+<section id="house">
+  <div class="house-head">
+    <h2 class="split hsplit">Baked here. Entirely eggless.</h2>
+    <p>The whole bakery and the savoury menu come out of our own kitchen without a single egg, so nobody at the table has to ask first.</p>
+    <a class="act-link" href="bakery.html">The bakery</a>
+  </div>
+  <div class="cutrow">
+    <figure class="cutfig cf-a"><div class="spin"><img loading="lazy" src="assets/img/cut-croissant-sandwich.webp" width="547" height="605" alt="A croissant sandwich with mozzarella, tomato and greens"></div><figcaption>Croissant sandwich</figcaption></figure>
+    <figure class="cutfig cf-b"><div class="spin"><img loading="lazy" src="assets/img/cut-turnover.webp" width="682" height="659" alt="A laminated apple turnover"></div><figcaption>Apple turnover</figcaption></figure>
+    <figure class="cutfig cf-c"><div class="spin"><img loading="lazy" src="assets/img/cut-cookie-croissant.webp" width="549" height="430" alt="A cookie croissant with chocolate chunks baked into the top"></div><figcaption>Cookie croissant</figcaption></figure>
+  </div>
+</section>
+
+<!-- Step inside. Pinned layered zoom through the storefront into the room. -->
+<section id="step">
+  <div class="step-pin">
+    <div class="step-frame" role="img" aria-label="The Doubleshot storefront on Ranjit Avenue">
+      <div class="lyr"></div><div class="lyr"></div><div class="lyr"></div><div class="lyr"></div><div class="lyr"></div><div class="lyr"></div>
+    </div>
+    <div class="step-word step-l">Step</div>
+    <div class="step-word step-r">inside.</div>
+    <div class="step-dim"></div>
+    <!-- 2026-09-11: the photo wall (Codrops "Sticky Grid Scroll" technique, rebuilt).
+         Nine of the client's own photos assemble as the section arrives, then the wall
+         zooms into its centre cell, which IS the opening storefront frame underneath,
+         so the hand-off into "Step inside" has no seam. Decorative, hidden from AT. -->
+    <div class="wall" aria-hidden="true">
+      <div class="wall-grid">
+        <figure class="wc"><img loading="lazy" src="assets/img/band-v60.webp" width="720" height="960" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/strip-C7Rs5gdBMAP.webp" width="640" height="800" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/bakery-hero.webp" width="900" height="1125" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/band-aeropress.webp" width="720" height="960" alt=""></figure>
+        <figure class="wc wc-c"></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/bakery-croissant-sandwich.webp" width="1100" height="848" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/band-glass.webp" width="900" height="1200" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/strip-C4XSH7-xMnz.webp" width="576" height="560" alt=""></figure>
+        <figure class="wc"><img loading="lazy" src="assets/img/band-cup.webp" width="720" height="960" alt=""></figure>
+      </div>
+    </div>
+    <div class="step-in">
+      <figure><img loading="lazy" src="assets/img/room-interior.webp" width="640" height="756" alt="Guests on cane chairs inside the café, the counter behind them"></figure>
+      <div class="step-copy">
+        <h3>The room</h3>
+        <p>SCO 49, B Block, Ranjit Avenue. Cane chairs, a long counter and a full house most evenings. Open every day, 9:00 to 21:00.</p>
+        <a class="act-link" href="locations.html">All locations</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Instagram: six real @doubleshotroasters posts (2026-09-11 fill pass). -->
+<section id="ig">
+  <div class="steam-rule" data-ds-mark="view" data-part="steam" aria-hidden="true"></div>
+  <div class="ig-head">
+    <h2>On Instagram</h2>
+    <a class="act-link" href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">@doubleshotroasters</a>
+  </div>
+  <div class="ig-grid">
+    <a class="ig-tile" href="https://www.instagram.com/p/DQwoKdnCX9j/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-DQwoKdnCX9j.webp" width="640" height="640" alt="Guests at the counter and the tables inside the cafe"></a>
+    <a class="ig-tile" href="https://www.instagram.com/p/C0oRnxCxsBD/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-C0oRnxCxsBD.webp" width="640" height="640" alt="The cup-and-steam sign on the Doubleshot building"></a>
+    <a class="ig-tile" href="https://www.instagram.com/p/C783muxRM_k/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-C783muxRM_k.webp" width="640" height="640" alt="Iced latte topped with whipped cream"></a>
+    <a class="ig-tile" href="https://www.instagram.com/p/DLm2BwohffK/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-DLm2BwohffK.webp" width="560" height="560" alt="Bagels fresh on the cooling rack"></a>
+    <a class="ig-tile" href="https://www.instagram.com/p/DCYs8yqxeW3/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-DCYs8yqxeW3.webp" width="640" height="640" alt="Winter spice latte, hot and iced, with whole spices"></a>
+    <a class="ig-tile" href="https://www.instagram.com/p/C4vPJmKRCco/" target="_blank" rel="noopener"><img loading="lazy" src="assets/img/ig-C4vPJmKRCco.webp" width="640" height="640" alt="Country and wholewheat sourdough loaves on the shelf"></a>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="giant split" aria-hidden="true">Doubleshot</div>
+  <div class="foot-grid">
+    <div>
+      <span class="foot-mark" data-ds-mark="view" aria-hidden="true"></span>
+      <p>Sourcing, roasting and brewing in Punjab.<br>100% eggless artisanal bakery &amp; savoury.</p>
+    </div>
+    <div>
+      <h2>Visit</h2>
+      <a href="locations.html">Amritsar</a>
+      <a href="locations.html">Mohali</a>
+      <a href="locations.html">Jalandhar</a>
+      <a href="locations.html">Chandigarh (opening soon)</a>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="fl">SCO 49, B Block, District Shopping Centre, Ranjit Avenue, Amritsar 143001</div>
+</footer>
+
+<script defer src="assets/liquid.js?v=1789137475"></script>
+<script defer src="assets/velocity.js?v=1789137475"></script>
+<script defer src="assets/order.js?v=1789137475"></script>
+<script defer src="assets/mnav.js?v=1789340000"></script>
+<!-- 2026-09-13: the doughnut track replaced the runner (client request) -->
+<script defer src="assets/donut.js?v=1789330000"></script>
+<script type="module">
+import * as THREE from 'three';
+/* =======================================================================
+   CONFIG
+======================================================================= */
+const FRAME_COUNT   = 140;
+const isMobile      = window.matchMedia('(max-width:820px), (pointer:coarse)').matches;
+const FRAME_DIR     = isMobile ? 'frames/mobile' : 'frames/desktop';
+const framePath     = i => `${FRAME_DIR}/frame-${String(i+1).padStart(4,'0')}.webp`;
+const reduceMotion  = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* Frame smoothing. Lower = smoother/heavier, higher = snappier. */
+const LERP_FACTOR = 0.075;
+
+/* ---- Scroll-dwell engine -------------------------------------------------
+   Rather than mapping scroll linearly to frames, we make the sequence
+   "almost stop" wherever a content section sits. Centres are placed on the
+   beats that actually look good (bean, grinder, extraction, latte art, the
+   branded reveal, the splash) and deliberately AVOID the montage's hard cuts
+   (~0.26-0.33) and the white-flash whip pan (~0.77-0.90), so those pass by
+   quickly and read as cuts rather than being scrubbed through as mush.      */
+/* Re-mapped 2026-09-10 against a frame-by-frame sheet: the finished latte-art
+   logo is frames ~104-116 (0.75), the white flash is 124-128 (~0.90, avoid),
+   the cup lands on green at ~132 (0.95) and the full splash is 136-140. */
+const DWELL_CENTERS = [0.045, 0.205, 0.445, 0.75, 0.95, 0.992];
+const DWELL_WIDTH   = 0.045;
+const DWELL_PEAK    = 3.5;
+const REMAP_N       = 2000;
+
+/* =======================================================================
+   DWELL LOOKUP TABLE
+======================================================================= */
+function density(x){
+  let d = 1;
+  for (const c of DWELL_CENTERS){
+    const z = (x - c) / DWELL_WIDTH;
+    d += DWELL_PEAK * Math.exp(-0.5 * z * z);
+  }
+  return d;
+}
+// cum[i] = normalised scroll position for effective progress i/REMAP_N
+const cum = new Float64Array(REMAP_N + 1);
+(function buildLUT(){
+  let acc = 0;
+  for (let i = 1; i <= REMAP_N; i++){
+    const x0 = (i-1)/REMAP_N, x1 = i/REMAP_N;
+    acc += 0.5 * (density(x0) + density(x1)) / REMAP_N;   // trapezoid
+    cum[i] = acc;
+  }
+  const total = cum[REMAP_N] || 1;
+  for (let i = 0; i <= REMAP_N; i++) cum[i] /= total;
+})();
+
+// scroll position -> effective progress (inverse of cum)
+function remapProgress(s){
+  s = Math.min(1, Math.max(0, s));
+  let lo = 0, hi = REMAP_N;
+  while (lo < hi){ const mid = (lo+hi) >> 1; if (cum[mid] < s) lo = mid+1; else hi = mid; }
+  const i  = Math.max(1, lo);
+  const c0 = cum[i-1], c1 = cum[i];
+  const t  = c1 > c0 ? (s - c0) / (c1 - c0) : 0;
+  return ((i-1) + t) / REMAP_N;
+}
+// effective progress -> scroll position (forward map, for placing the copy)
+function forwardMap(e){
+  e = Math.min(1, Math.max(0, e));
+  const f = e * REMAP_N, i = Math.min(REMAP_N, Math.floor(f) + 1);
+  const t = f - (i-1);
+  return cum[i-1] + (cum[i] - cum[i-1]) * t;
+}
+// Each section shows at the SCROLL position of its dwell centre.
+const SECTION_AT = DWELL_CENTERS.map(forwardMap);
+
+/* =======================================================================
+   CANVAS + FRAMES
+======================================================================= */
+const glCanvas = document.getElementById('canvas');
+
+/* The frame sequence is composited on an OFFSCREEN 2D canvas, and that single
+   canvas is the only texture WebGL ever sees. Uploading 140 individual 1080p
+   textures would cost ~1.1GB of VRAM; this costs one viewport-sized upload per
+   changed frame. The shader then does grain, chromatic aberration and vignette
+   in one GPU pass, replacing a CSS blur filter and two DOM overlay layers. */
+const canvas = document.createElement('canvas');
+const ctx    = canvas.getContext('2d', { alpha:false });
+
+const renderer = new THREE.WebGLRenderer({ canvas:glCanvas, antialias:false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+const scene   = new THREE.Scene();
+const camera  = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+const srcTex  = new THREE.CanvasTexture(canvas);
+srcTex.minFilter = THREE.LinearFilter;
+srcTex.magFilter = THREE.LinearFilter;
+srcTex.generateMipmaps = false;
+
+const uniforms = {
+  uTex:   { value: srcTex },
+  uVel:   { value: 0 },
+  uTime:  { value: 0 },
+  uGrain: { value: 0.068 },
+  /* 1.62 read as glare (white cup and milk clipped, "sun in the eyes").
+     At 1.0 the ACES curve keeps midtones near the source and rolls whites off
+     at ~0.8, so highlights stay creamy instead of burning. */
+  /* Second pass, client: "still shiny, glossy... a bit dark will look prettier."
+     Under-expose slightly and let the matte shoulder below do the rest. */
+  uExposure: { value: 0.82 },
+  uSat:      { value: 0.95 },
+};
+
+const material = new THREE.ShaderMaterial({
+  uniforms,
+  vertexShader: `
+    varying vec2 vUv;
+    void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
+  `,
+  fragmentShader: `
+    precision highp float;
+    uniform sampler2D uTex;
+    uniform float uVel, uTime, uGrain, uExposure, uSat;
+
+    /* ACES filmic tonemap (Narkowicz approximation). Replaces a plain gamma
+       lift: gamma raises everything uniformly and flattens the highlights,
+       whereas this rolls the highlights off on a curve, so the splash can be
+       pushed much brighter before the crema and milk clip to white. */
+    vec3 aces(vec3 x){
+      const float a=2.51, b=0.03, c=2.43, d=0.59, e=0.14;
+      return clamp((x*(a*x+b))/(x*(c*x+d)+e), 0.0, 1.0);
+    }
+    varying vec2 vUv;
+
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+
+    void main(){
+      /* Chromatic split scales with scroll velocity, along the scroll axis.
+         At rest it is exactly zero, so a held frame stays clean. */
+      float ab = uVel * 0.0045;
+      vec2 d = vec2(0.0, ab);
+      float r = texture2D(uTex, vUv + d).r;
+      float g = texture2D(uTex, vUv).g;
+      float b = texture2D(uTex, vUv - d).b;
+      vec3 col = vec3(r,g,b);
+
+      /* Grade. The splash beat measures luma 40 against 92 for the latte beat,
+         so it reads dim no matter how light the overlays get - the footage
+         itself is dark. A gamma lift raises shadows and midtones while leaving
+         1.0 mapped to 1.0, so highlights never clip, and it self-balances:
+         dark frames gain a lot, already-bright frames barely move. */
+      col = aces(max(col, 0.0) * uExposure);
+      float sl = dot(col, vec3(0.2126, 0.7152, 0.0722));
+      col = mix(vec3(sl), col, uSat);
+
+      /* Matte shoulder. The generated footage has a plastic specular sheen on the
+         milk, the cup and the splash; that sheen is what reads as "fake". Pull the
+         white point down and bleed a little colour out of the brightest tones so
+         highlights sit like printed film, not wet gloss. */
+      float hl = smoothstep(0.55, 0.95, dot(col, vec3(0.2126, 0.7152, 0.0722)));
+      col = mix(col, vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), hl * 0.22);
+      col *= 0.94;
+
+      /* Animated film grain, denser in shadow where real film grain lives. */
+      float lum = dot(col, vec3(0.299,0.587,0.114));
+      float grainScale = mix(1024.0, 640.0, min(abs(uVel), 1.0));
+      float gr = hash(vUv * grainScale + fract(uTime)) - 0.5;
+      col += gr * uGrain * (1.0 + abs(uVel) * 0.5) * (1.0 - lum * 0.65);
+
+      /* Vignette */
+      float dist = distance(vUv, vec2(0.5));
+      col *= mix(1.0, 0.84, smoothstep(0.42, 0.98, dist));
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `,
+});
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), material));
+const frames = new Array(FRAME_COUNT);
+let loaded = 0, natW = 1920, natH = 1080;
+let targetFrame = 0, currentFrame = 0, drawnFrame = -1;
+
+function resize(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  // 2026-09-12: the 2D canvas is the film TEXTURE and is re-uploaded to the GPU on every
+  // frame change. Never make it larger than the source frames (natW, 1920): above that
+  // it only multiplies upload cost with no extra detail. The WebGL output is capped at 1.5x.
+  const tdpr = Math.min(dpr, Math.max(1, natW / window.innerWidth));
+  canvas.width  = Math.round(window.innerWidth  * tdpr);
+  canvas.height = Math.round(window.innerHeight * tdpr);
+  ctx.setTransform(tdpr,0,0,tdpr,0,0);
+  renderer.setPixelRatio(Math.min(dpr, 1.5));
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  drawnFrame = -1;
+  drawFrame(Math.round(currentFrame));
+}
+
+function nearest(i){
+  if (frames[i]) return frames[i];
+  for (let r = 1; r < FRAME_COUNT; r++){
+    if (frames[i-r]) return frames[i-r];
+    if (frames[i+r]) return frames[i+r];
+  }
+  return null;
+}
+
+function drawFrame(i){
+  i = Math.max(0, Math.min(FRAME_COUNT-1, i));
+  const img = nearest(i);
+  if (!img) return;
+  const cw = window.innerWidth, ch = window.innerHeight;
+  ctx.fillStyle = '#0A2111';
+  ctx.fillRect(0,0,cw,ch);
+  const s = Math.max(cw/natW, ch/natH);          // cover
+  const w = natW*s, h = natH*s;
+
+  /* Subject offset. The copy column sits on the left, and on a portrait or
+     narrow viewport a centred cover-crop parks the cup right underneath it.
+     Biasing the image right moves the subject clear of the type instead of
+     burying the frame under more scrim. Wide screens stay centred. */
+  const overflowX = Math.max(0, w - cw);
+  const narrow = cw / ch < 1.15;
+  const bias = narrow ? Math.min(overflowX * 0.5, cw * 0.16) : 0;
+
+  ctx.drawImage(img, (cw-w)/2 + bias, (ch-h)/2, w, h);
+  drawnFrame = i;
+}
+
+async function loadOne(i){
+  return new Promise(res=>{
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = async ()=>{
+      try { frames[i] = await createImageBitmap(img); } catch { frames[i] = img; }
+      if (natW === 1920 && img.naturalWidth) { natW = img.naturalWidth; natH = img.naturalHeight; }
+      loaded++;
+      const pct = Math.round(loaded/FRAME_COUNT*100);
+      if (window.__lmark) window.__lmark.progress(loaded/FRAME_COUNT);
+      document.getElementById('lpct').textContent  = pct + '%';
+      res();
+    };
+    img.onerror = ()=>{ loaded++; res(); };
+    img.src = framePath(i);
+  });
+}
+
+async function loadFrames(){
+  // critical pass — evenly spaced, so something is drawable almost immediately
+  const critical = [];
+  for (let i = 0; i < FRAME_COUNT; i += 10) critical.push(i);
+  if (!critical.includes(FRAME_COUNT-1)) critical.push(FRAME_COUNT-1);
+  await Promise.all(critical.map(loadOne));
+  resize();
+  drawFrame(0);
+  srcTex.needsUpdate = true;
+  renderer.render(scene, camera);
+
+  // remainder in batches
+  const rest = [];
+  for (let i = 0; i < FRAME_COUNT; i++) if (!frames[i]) rest.push(i);
+  const BATCH = 12;
+  for (let i = 0; i < rest.length; i += BATCH){
+    await Promise.all(rest.slice(i, i+BATCH).map(loadOne));
+  }
+}
+
+/* =======================================================================
+   SCROLL LOOP
+======================================================================= */
+const anim = document.getElementById('anim');
+const tint = document.getElementById('tint');
+const sts  = [...document.querySelectorAll('.st')];
+
+function scrollProgress(){
+  const r = anim.getBoundingClientRect();
+  const denom = r.height - window.innerHeight;
+  return denom <= 0 ? 0 : Math.max(0, Math.min(1, -r.top / denom));
+}
+
+/* Two tokens and one accent. Award-winning sites in this space run two
+   colours plus a single accent; the caramel lives in the FOOTAGE, not in six
+   different UI gradients. These washes are near-monochrome on purpose. */
+const TINTS = [
+  'linear-gradient(140deg,#C6A472,#0A2111)',
+  'linear-gradient(140deg,#1E3A28,#0A2111)',
+  'linear-gradient(140deg,#C6A472,#1E3A28)',
+  'linear-gradient(140deg,#1E3A28,#0A2111)',
+  'linear-gradient(140deg,#1E3A28,#0A2111)',
+  'linear-gradient(140deg,#C6A472,#0A2111)',
+];
+
+let activeChap = -1;
+function updateOverlays(p){
+  // The overlays are position:fixed, so they must be released the moment the
+  // pinned stage leaves the viewport — otherwise they sit on top of the gallery.
+  const r = anim.getBoundingClientRect();
+  // #runs overlaps the end of the stage, so the fixed chapter copy must also
+  // clear once the sentence has risen past the middle of the screen.
+  const runsTop = document.getElementById('runs').getBoundingClientRect().top;
+  const stageOnScreen = r.top <= 0 && r.bottom > window.innerHeight * 0.5
+                        && runsTop > window.innerHeight * 0.55;
+
+  // nearest section wins, within a window
+  let best = -1, bestD = 1e9;
+  SECTION_AT.forEach((c,i)=>{ const d = Math.abs(p-c); if (d < bestD){ bestD = d; best = i; } });
+  const show = (stageOnScreen && bestD < 0.075) ? best : -1;
+
+  document.getElementById('chapters').style.opacity = stageOnScreen ? '1' : '0';
+  const cs = document.getElementById('copyscrim');
+  // Low captions on the key shots get no scrim: nothing may dim the cup.
+  cs.classList.toggle('on', show !== -1 && !sts[show].classList.contains('low'));
+  cs.classList.toggle('centred', show === 5);
+  sts.forEach((el,i)=> el.classList.toggle('visible', i === show));
+
+  if (show !== -1 && show !== activeChap){
+    activeChap = show;
+    tint.style.background = TINTS[show];
+    [...document.querySelectorAll('.chap')].forEach((c,i)=>{
+      c.classList.toggle('on', i === show);
+      c.classList.toggle('done', i < show);
+    });
+    if (show === 0) startCounters();
+  }
+}
+
+/* Lenis: weighted inertial scroll. Native wheel arrives in coarse ~100px
+   steps; scrubbing a frame sequence straight off that is the main reason a
+   scroll-scrub reads as notchy no matter how good the easing after it is. */
+let lenis = null;
+// 2026-09-12 mobile pass: Lenis only for fine pointers (see site.js): on touch it smooths
+// nothing and fought native scrolls.
+if (!reduceMotion && matchMedia('(pointer:fine)').matches && typeof Lenis !== 'undefined'){
+  // 2026-09-12 (client: "glitching a lot"): lerp (continuous) instead of duration, and
+  // Lenis runs on GSAP's ticker (Lenis README), followed in the same tick by the film
+  // loop, so scroll, film frame, pins and scrubs all update in one frame.
+  lenis = new Lenis({ lerp:0.1, smoothWheel:true, wheelMultiplier:1 });
+  if (typeof gsap !== 'undefined'){
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  } else requestAnimationFrame(function raf(t){ lenis.raf(t); requestAnimationFrame(raf); });
+}
+
+/* Velocity-reactive canvas: fast scrolling picks up a touch of directional
+   blur and skew, then settles. Reads as film rather than a slideshow. */
+let smoothVel = 0;
+function applyFilmMotion(){
+  const v = lenis ? lenis.velocity : 0;
+  smoothVel += (v - smoothVel) * 0.12;
+  // Normalised, signed, clamped. Feeds the shader's chromatic split; at rest
+  // it lands on exactly 0 so a held frame renders perfectly clean.
+  const mag = Math.max(-1, Math.min(1, smoothVel / 34));
+  uniforms.uVel.value = Math.abs(mag) < 0.02 ? 0 : mag;
+}
+
+function tick(){
+  const raw = scrollProgress();
+  const eff = remapProgress(raw);
+  targetFrame = eff * (FRAME_COUNT - 1);
+  currentFrame += (targetFrame - currentFrame) * LERP_FACTOR;
+  const r = Math.round(currentFrame);
+  if (r !== drawnFrame){ drawFrame(r); srcTex.needsUpdate = true; }
+  updateOverlays(raw);
+  applyFilmMotion();
+  updateParallax();
+  if (marqueeAnim){
+    // Marquee runs with the scroll: faster when you scroll, reverses when you scroll up.
+    const v = lenis ? lenis.velocity : 0;
+    marqueeAnim.playbackRate = (v < -0.5 ? -1 : 1) * (1 + Math.min(Math.abs(v), 40) * 0.09);
+  }
+  uniforms.uTime.value = performance.now() * 0.001;
+  renderer.render(scene, camera);
+}
+
+/* =======================================================================
+   CHROME: chapters, cursor, particles, split, counters, gallery
+======================================================================= */
+(function chapters(){
+  const wrap = document.getElementById('chapters');
+  for (let i = 0; i < 6; i++){
+    const d = document.createElement('div');
+    d.className = 'chap';
+    d.innerHTML = '<div class="dot"></div>' + (i < 5 ? '<div class="line"></div>' : '');
+    wrap.appendChild(d);
+  }
+})();
+
+
+(function navBehaviour(){
+  const nav = document.getElementById('nav');
+  let last = window.scrollY;
+  addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    nav.classList.toggle('deep', y > window.innerHeight * 0.6);
+    // hide going down, reveal going up - but never hide at the very top
+    if (y > last && y > window.innerHeight) nav.classList.add('hide');
+    else nav.classList.remove('hide');
+    last = y;
+  }, { passive:true });
+})();
+
+(function particles(){
+  if (reduceMotion) return;
+  const c = document.getElementById('particles'), x = c.getContext('2d');
+  let ps = [];
+  function init(){
+    c.width = innerWidth; c.height = innerHeight;
+    ps = Array.from({length:40},()=>({
+      x:Math.random()*c.width, y:Math.random()*c.height,
+      r:0.3+Math.random()*1.5,
+      vx:(Math.random()-.5)*0.12, vy:(Math.random()-.5)*0.12,
+      a:0.05+Math.random()*0.3
+    }));
+  }
+  // same address-bar rule as the film canvas: only a width change rebuilds the particles
+  let pw = innerWidth;
+  init(); addEventListener('resize', ()=>{ if (matchMedia('(pointer:coarse)').matches && innerWidth === pw) return; pw = innerWidth; init(); });
+  (function loop(){
+    x.clearRect(0,0,c.width,c.height);
+    for (const p of ps){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=c.width; if(p.x>c.width)p.x=0;
+      if(p.y<0)p.y=c.height; if(p.y>c.height)p.y=0;
+      x.beginPath(); x.arc(p.x,p.y,p.r,0,6.283);
+      x.fillStyle=`rgba(244,240,234,${p.a})`; x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+(function split(){
+  document.querySelectorAll('.split').forEach(el=>{
+    if (typeof SplitType === 'undefined') return;
+    new SplitType(el, { types:'words,chars' });
+    el.querySelectorAll('.char').forEach((c,i)=>{
+      c.style.transitionDelay = (i*0.022)+'s';   // 22ms stagger
+    });
+  });
+})();
+
+let countersRun = false;
+function startCounters(){
+  if (countersRun) return; countersRun = true;
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const to = +el.dataset.count, t0 = performance.now(), dur = 1500;
+    (function step(now){
+      const k = Math.min(1,(now-t0)/dur);
+      el.textContent = Math.round(to * (1-Math.pow(1-k,3)));
+      if (k<1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+
+(function belowHero(){
+  // The film stills gallery is gone: research across 9 scroll-scrub sites found
+  // nobody re-shows the hero's own footage below it. One reveal per block.
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.2});
+  document.querySelectorAll('#runs, .act, .ph, .hsplit, .cutfig, .giant').forEach(el=>io.observe(el));
+  document.querySelectorAll('.hsplit .char').forEach((c,i)=>{ c.style.transitionDelay = (i*0.016)+'s'; });
+  // Safety net: a fast fling or an anchor jump can carry a block from below the
+  // fold to above it without it ever intersecting, so IO never fires. Anything
+  // whose top has passed the bottom of the viewport is revealed regardless.
+  const pending = [...document.querySelectorAll('#runs, .act, .ph, .hsplit, .cutfig, .giant')];
+  addEventListener('scroll', ()=>{
+    for (const el of pending){
+      if (!el.classList.contains('in') && el.getBoundingClientRect().top < innerHeight) el.classList.add('in');
+    }
+  }, { passive:true });
+  document.querySelectorAll('#runs .char').forEach((c,i)=>{ c.style.transitionDelay = (i*0.018)+'s'; });
+})();
+
+/* =======================================================================
+   SIGNATURE MOTION (GSAP ScrollTrigger on the same Lenis scroll)
+   Patterns from RESEARCH-2026-09-10.md: pinned named list with a synced
+   image, Codrops layered zoom, velocity-aware marquee, fitted wordmark.
+======================================================================= */
+let marqueeAnim = null;
+(function signature(){
+  const track = document.querySelector('.mq-track');
+  if (track && !reduceMotion){
+    marqueeAnim = track.animate([{ transform:'translateX(0)' }, { transform:'translateX(-50%)' }],
+                                { duration:42000, iterations:Infinity });
+  }
+
+  // Fit the closing wordmark exactly to the footer's content width.
+  const giant = document.querySelector('.giant');
+  const fitGiant = ()=>{
+    if (!giant) return;
+    giant.style.fontSize = '17vw';
+    const ratio = giant.clientWidth / giant.scrollWidth;
+    if (ratio < 1 || ratio > 1.02) giant.style.fontSize = (parseFloat(getComputedStyle(giant).fontSize) * ratio * 0.97) + 'px';
+  };
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(fitGiant);
+  addEventListener('resize', fitGiant);
+  document.querySelectorAll('.giant .char').forEach((c,i)=>{ c.style.transitionDelay = (i*0.035)+'s'; });
+
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  // phones: the address bar is a height-only resize; do not re-measure the pins on it
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  // Pins stay position:fixed (default). Transform pins (tried 2026-09-11 for lab CLS)
+  // shook against the scroll; see site.js.
+  if (lenis) lenis.on('scroll', ScrollTrigger.update);
+
+  // What we pour: the list pins; each quarter of the scroll activates one drink.
+  const pour = document.getElementById('pour');
+  if (pour){
+    const items = [...pour.querySelectorAll('.pour-list li')];
+    const cuts  = [...pour.querySelectorAll('.cut')];
+    const bar   = pour.querySelector('.pour-bar i');
+    let active = -1;
+    const setActive = i => {
+      if (i === active) return; active = i;
+      items.forEach((li,k)=> li.classList.toggle('on', k === i));
+      cuts.forEach((c,k)=>{ c.classList.toggle('on', k === i); c.classList.toggle('past', k < i); });
+    };
+    setActive(0);
+    ScrollTrigger.create({
+      trigger: pour, start: 'top top', end: ()=> '+=' + innerHeight * items.length * 0.5,
+      pin: pour.querySelector('.pour-pin'), anticipatePin: 1,
+      onUpdate: self => {
+        setActive(Math.min(items.length - 1, Math.floor(self.progress * items.length)));
+        if (bar) bar.style.transform = `scaleY(${self.progress.toFixed(4)})`;
+      }
+    });
+  }
+
+  // Step inside: nested storefronts rush outward, the room dims, the interior arrives.
+  // 2026-09-10: it OPENS on one sharp full-bleed storefront. The nested copies start
+  // hidden and fade in only once the scroll begins; the zoom itself is unchanged.
+  const step = document.getElementById('step');
+  if (step){
+    const frame  = step.querySelector('.step-frame');
+    const layers = gsap.utils.toArray('#step .lyr');
+    const base   = [1, .8, .63, .48, .34, .22];
+    gsap.set(layers, { scale: i => base[i], opacity: i => i === 0 ? 1 : 0, transformOrigin: '50% 68%' });
+    gsap.set(frame, { transformOrigin: '50% 68%' });
+    // 2026-09-11: the photo wall runs first (W of timeline), then the original zoom,
+    // shifted by W. The pin grows 240% -> 390% so the zoom keeps its old pace.
+    const wall  = step.querySelector('.wall');
+    const W     = wall && !reduceMotion ? .9 : 0;
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: { trigger: step, start: 'top top', end: W ? '+=390%' : '+=240%', pin: step.querySelector('.step-pin'), scrub: 1, anticipatePin: 1 }
+    });
+    if (W){
+      wall.classList.add('on');
+      const grid  = wall.querySelector('.wall-grid');
+      const cells = gsap.utils.toArray('.wc', wall);
+      // columns assemble while the section scrolls into view: outer columns rise, the
+      // middle one drops (Codrops' alternating columns)
+      gsap.set(cells, { yPercent: i => (i % 3 === 1 ? -80 : 80), opacity: 0 });
+      gsap.to(cells, { yPercent: 0, opacity: 1, ease: 'power2.out', stagger: .04,
+        scrollTrigger: { trigger: step, start: 'top 85%', end: 'top top', scrub: 1 } });
+      tl.to(grid, { scale: 100 / 28, duration: .75, ease: 'power2.inOut' }, .1)
+        .to(cells.filter(c => !c.classList.contains('wc-c')), { opacity: 0, duration: .4, ease: 'power1.in' }, .35)
+        .to(wall, { autoAlpha: 0, duration: .06 }, .86);
+    }
+    tl.to(layers.slice(1), { opacity: i => 0.82 - i * 0.1, duration: .14, stagger: .02 }, W + .02)
+      .to('.step-l', { xPercent: -70, opacity: 0, duration: .5, ease: 'power2.in' }, W)
+      .to('.step-r', { xPercent:  70, opacity: 0, duration: .5, ease: 'power2.in' }, W)
+      .to(frame,  { scale: 2.7, duration: 1, ease: 'power1.in' }, W)
+      .to(layers, { scale: i => base[i] * 2.3, duration: 1, ease: 'power1.inOut', stagger: .045 }, W)
+      .to('.step-dim', { opacity: 1, duration: .3 }, W + .72)
+      .to('.step-in',  { opacity: 1, duration: .25 }, W + 1.02)
+      .fromTo('.step-in figure', { scale: 1.12 }, { scale: 1, duration: .5, ease: 'power2.out' }, W + 1.02)
+      .fromTo('.step-copy > *', { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: .06, duration: .35, ease: 'power2.out' }, W + 1.1);
+  }
+
+  // The bakery row: each cut-out turns as it passes (scroll-scrubbed) and tilts
+  // toward the cursor. .spin takes the turn and the img the tilt, so no two tweens
+  // fight over one transform; the figure itself keeps its CSS reveal.
+  if (!reduceMotion) gsap.utils.toArray('#house .cutfig').forEach((fig, i)=>{
+    const dir = i % 2 ? 1 : -1;
+    const spin = fig.querySelector('.spin'), img = fig.querySelector('img');
+    if (!spin || !img) return;
+    gsap.set(spin, { transformPerspective: 1000 });
+    gsap.fromTo(spin, { rotation: -dir * 14, rotationY: dir * 28, scale: .86 },
+      { rotation: dir * 8, rotationY: -dir * 14, scale: 1, ease: 'none',
+        scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: .6 } });
+    if (!matchMedia('(pointer:fine)').matches) return;
+    gsap.set(img, { transformPerspective: 700 });
+    const rx = gsap.quickTo(img, 'rotationX', { duration: .6, ease: 'power3.out' });
+    const ry = gsap.quickTo(img, 'rotationY', { duration: .6, ease: 'power3.out' });
+    fig.addEventListener('pointermove', e=>{
+      const r = fig.getBoundingClientRect();
+      ry(((e.clientX - r.left) / r.width - .5) * 26);
+      rx(-((e.clientY - r.top) / r.height - .5) * 20);
+    });
+    fig.addEventListener('pointerenter', ()=> gsap.to(img, { y: -14, scale: 1.05, duration: .6, ease: 'power3.out', overwrite: 'auto' }));
+    fig.addEventListener('pointerleave', ()=>{ rx(0); ry(0); gsap.to(img, { y: 0, scale: 1, duration: .8, ease: 'power3.out', overwrite: 'auto' }); });
+  });
+
+  // Images below the pins load lazily; re-measure once they have real heights.
+  addEventListener('load', ()=> ScrollTrigger.refresh());
+  // Lazy images arrive after 'load' and can shift everything below them, which
+  // would leave the pin start/end positions stale. Re-measure as each lands.
+  let refreshT = null;
+  document.querySelectorAll('img[loading="lazy"]').forEach(img=>{
+    if (!img.complete) img.addEventListener('load', ()=>{
+      clearTimeout(refreshT); refreshT = setTimeout(()=> ScrollTrigger.refresh(), 150);
+    }, { once:true });
+  });
+})();
+
+
+/* =======================================================================
+   PARALLAX + MAGNETIC
+   Both ride the rAF loop that is already running for the scrub. No second
+   animation library: adding one to do a translate would be weight for its
+   own sake.
+======================================================================= */
+const paraItems = [];
+function initParallax(){
+  // Inner-page rule applied here too: photos drift at ~0.12 depth, no more.
+  document.querySelectorAll('.act img').forEach((img,i)=>{
+    paraItems.push({ el: img, depth: i % 2 ? -0.12 : 0.12 });
+  });
+  document.querySelectorAll('.ph img').forEach((img,i)=>{
+    paraItems.push({ el: img, depth: i % 2 ? -0.08 : 0.08, scale: 1.14 });
+  });
+  // the chapter copy drifts very slightly against the film for depth
+  // .low captions are bottom-anchored; the keepY -50% formula would lift them off-screen.
+  document.querySelectorAll('.st:not(.low)').forEach(el=> paraItems.push({ el, depth: -0.035, keepY: true }));
+}
+
+function updateParallax(){
+  const vh = window.innerHeight;
+  // all reads first, then all writes: reading a rect after the previous item's write
+  // forced a style/layout pass per item, every frame (official GSAP performance skill)
+  const rects = paraItems.map(p => p.el.getBoundingClientRect());
+  for (let k = 0; k < paraItems.length; k++){
+    const p = paraItems[k], r = rects[k];
+    if (r.bottom < -vh || r.top > vh * 2) continue;      // offscreen, skip
+    const centre = r.top + r.height / 2;
+    const off = (centre - vh / 2) / vh;                  // -1 .. 1 through viewport
+    const shift = off * p.depth * 100;
+    p.el.style.transform = p.keepY
+      ? `translateY(calc(-50% + ${shift.toFixed(2)}px))`
+      : `translate3d(0,${shift.toFixed(2)}px,0) scale(${p.scale || 1.12})`;
+  }
+}
+
+function initMagnetic(){
+  if (window.matchMedia('(pointer:coarse)').matches) return;   // no hover on touch
+  document.querySelectorAll('.btn, #nav nav a').forEach(el=>{
+    let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
+    const RADIUS = 68, PULL = 0.32;
+    const loop = ()=>{
+      rx += (tx - rx) * 0.16; ry += (ty - ry) * 0.16;
+      el.style.transform = `translate(${rx.toFixed(2)}px,${ry.toFixed(2)}px)`;
+      if (Math.abs(tx-rx) > 0.1 || Math.abs(ty-ry) > 0.1) raf = requestAnimationFrame(loop);
+      else { raf = null; el.style.transform = `translate(${tx}px,${ty}px)`; }
+    };
+    const kick = ()=>{ if (!raf) raf = requestAnimationFrame(loop); };
+    el.addEventListener('pointermove', e=>{
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width/2);
+      const dy = e.clientY - (r.top + r.height/2);
+      if (Math.hypot(dx,dy) < RADIUS + Math.max(r.width,r.height)/2){
+        tx = dx * PULL; ty = dy * PULL; kick();
+      }
+    });
+    el.addEventListener('pointerleave', ()=>{ tx = 0; ty = 0; kick(); });
+  });
+}
+
+/* =======================================================================
+   INIT
+======================================================================= */
+// phones fire resize on every address-bar show/hide: a height-only change there must not
+// reallocate the film canvas + WebGL buffer mid-scroll (it did, and the page jumped)
+let lastRW = innerWidth, lastRH = innerHeight;
+addEventListener('resize', ()=>{
+  const w = innerWidth, h = innerHeight;
+  if (matchMedia('(pointer:coarse)').matches && w === lastRW && Math.abs(h - lastRH) < 220) return;
+  lastRW = w; lastRH = h; resize();
+});
+
+(async function init(){
+  resize();
+  await loadFrames();
+  initParallax();
+  // Magnetic pull removed (client: hover problem). Links sliding toward the
+  // cursor and resting off-position read as unstable, not premium.
+  // the outline has drawn with the loading; let the fill land before the loader lifts
+  if (window.__lmark) window.__lmark.draw();
+  setTimeout(()=>{ document.getElementById('loader').classList.add('done');
+    setTimeout(()=>document.getElementById('loader').style.display='none', 950); }, reduceMotion ? 0 : 900);
+  if (reduceMotion){ drawFrame(0); srcTex.needsUpdate = true;
+                     renderer.render(scene, camera); updateOverlays(0); }
+  // the film loop runs on GSAP's ticker, after lenis.raf (added first), same frame
+  else if (typeof gsap !== 'undefined') gsap.ticker.add(tick);
+  else (function loop(){ tick(); requestAnimationFrame(loop); })();
+})();
+</script>
+</body>
+</html>

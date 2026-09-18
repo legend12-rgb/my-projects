@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Roastery &middot; Doubleshot Coffee Roasters</title>
+<meta name="description" content="Handpicked cherries, roasted on premise in Amritsar. Sourcing and roasting at Doubleshot." />
+<meta name="theme-color" content="#0A2111" />
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=1789759582">
+<!-- defer: render-blocking CDN scripts delayed first paint enough that the
+     cross-document View Transition was never created on inner pages. -->
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script defer src="assets/logo-paths.js?v=1789759582"></script>
+<script defer src="assets/logo.js?v=1789759582"></script>
+<style>
+/* ---------- inner-page hero: giant type + a floating subject --------------
+   Replaces the blurred film still. Sons & Daughters-style oversized title;
+   the cut-out sits in front of the letters for depth. No dead gap below. */
+.hx{position:relative;min-height:88vh;padding:17vh var(--pad) 7vh;display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:end;gap:2vw;overflow:hidden}
+.hx::before{content:'';position:absolute;right:6vw;top:18vh;width:36vh;height:36vh;border-radius:50%;
+  background:radial-gradient(circle,rgba(198,164,114,.14) 0%,rgba(198,164,114,0) 68%);pointer-events:none}
+.hx-copy{position:relative;z-index:2;grid-column:1;grid-row:1}
+.hx-title{font-family:var(--heading);font-weight:800;font-size:clamp(3rem,7.6vw,8.2rem);line-height:.8;
+  letter-spacing:-.065em;margin:0 0 3.4vh -.05em;white-space:nowrap;color:var(--warm-white)}
+.hx.in .hx-title .char{transform:translateY(0)}
+/* A framed photo has hard edges, so the title must not run into it (a cut-out
+   can overlap the letters; a rectangle just looks like a collision). */
+.hx.framed .hx-title{font-size:clamp(2.8rem,6.4vw,7rem)}
+.hx-sub{font-size:clamp(15px,1.15vw,18px);line-height:1.5;color:var(--warm-white-dim);max-width:40ch;margin:0}
+.hx-copy .overline,.hx-copy .vegline,.hx-sub{opacity:0;transform:translateY(16px);
+  transition:opacity .9s ease .75s,transform 1s cubic-bezier(.16,1,.3,1) .75s}
+.hx-copy .overline,.hx-copy .vegline{margin-bottom:2.4vh}
+.hx.in .hx-copy .overline,.hx.in .hx-copy .vegline,.hx.in .hx-sub{opacity:1;transform:none}
+.hx-art{grid-column:2;grid-row:1;justify-self:center;align-self:center;margin:0;position:relative;z-index:1}
+.hx-art-in{opacity:0;transform:translateY(60px) scale(.95);
+  transition:opacity 1.2s ease .3s,transform 1.5s cubic-bezier(.16,1,.3,1) .3s}
+.hx.in .hx-art-in{opacity:1;transform:none}
+.hx-art.cut img{max-height:52vh;width:auto;max-width:100%;
+  filter:brightness(.9) drop-shadow(0 50px 60px rgba(0,0,0,.55));animation:hxfloat 8s ease-in-out infinite alternate}
+.hx-art.frame .hx-art-in{width:min(27vw,54vh);aspect-ratio:4/5;overflow:hidden}
+.hx-art.frame img{width:100%;height:100%;object-fit:cover;filter:brightness(.8) saturate(.9)}
+@keyframes hxfloat{from{transform:translateY(0) rotate(-1.2deg)}to{transform:translateY(-16px) rotate(1.2deg)}}
+.wrap{padding:var(--section) var(--pad)}
+.lede{max-width:52ch;font-size:clamp(17px,1.55vw,21px);line-height:1.45;font-weight:300;
+  letter-spacing:-.015em;margin:0 0 4vw}
+h2.sec{font-family:var(--heading);font-weight:500;letter-spacing:-.04em;
+  font-size:clamp(1.6rem,2.7vw,2.5rem);line-height:.98;margin:0 0 20px}
+.big{font-family:var(--display);font-weight:700;letter-spacing:-.04em;
+  font-size:clamp(1.7rem,3.1vw,2.7rem);line-height:1;margin:0 0 14px}
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:4vw}
+
+/* ---------- marquee + giant wordmark (shared with the homepage) ---------- */
+.marquee{position:relative;overflow:hidden;padding:2.2vw 0;background:var(--ink);
+  border-top:1px solid rgba(241,237,228,.12);border-bottom:1px solid rgba(241,237,228,.12)}
+.mq-track{display:flex;width:max-content;will-change:transform}
+.mq-track span{font-family:var(--heading);font-weight:500;font-size:clamp(1.3rem,2.6vw,2.5rem);
+  letter-spacing:-.035em;line-height:1;color:var(--warm-white);padding:0 .45em;white-space:nowrap}
+.mq-track span.dim{color:rgba(241,237,228,.55)}   /* .34 measured 2.81:1 */
+.mq-track b{font-family:var(--heading);font-weight:300;font-size:clamp(1.3rem,2.6vw,2.5rem);line-height:1;color:var(--accent);opacity:.8}
+.giant{font-family:var(--display);font-weight:700;font-size:17vw;line-height:.82;letter-spacing:-.05em;
+  color:var(--warm-white);white-space:nowrap;overflow:hidden;padding-bottom:.08em;margin:0 0 4vw}
+.giant.in .char{transform:translateY(0)}
+
+@media (max-width:820px){
+  /* top padding clears the ~70px phone header (24vw left the hero art touching it) */
+  .hx{grid-template-columns:1fr;min-height:0;padding:calc(18vw + 48px) var(--pad) 10vw;gap:6vw;align-items:start}
+  .hx-art{grid-column:1;grid-row:1;justify-self:center}
+  .hx-copy{grid-row:2}
+  .hx-title{font-size:16vw}
+  .hx-art.cut img{max-height:34vh}
+  .hx-art.frame .hx-art-in{width:70vw}
+  .hx-sub{font-size:16px}
+  .cols{grid-template-columns:1fr;gap:10vw}
+  /* grid children may shrink below their content on phones (a long unbreakable row
+     otherwise widens the whole page; found on Menu at 360px) */
+  .hx > *,.cols > *,.pair > *,.lmap > *,.city-body > *,.loc-all > *,.a3 > *,.mgrid > *{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .hx-art.cut img{animation:none}
+  .hx-art-in,.hx-copy .overline,.hx-copy .vegline,.hx-sub{opacity:1;transform:none;transition:none}
+}
+
+/* ---------- roastery: the client's photo strip, drifting with scroll ---- */
+/* 2026-09-11 (client: "images a bit too small"): 4-in-a-row at ~250px wide became a
+   staggered 2+2 on 12 columns, each photo ~370-470px wide, capped at 64vh. */
+.rstrip{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:1.6vw;row-gap:4vw;
+  padding:0 var(--pad) 8vw;align-items:start}
+.rs-frame{margin:0}
+.rs-frame img{width:100%;max-height:64vh;object-fit:cover;display:block;filter:brightness(.86) saturate(.92)}
+.rs-frame:nth-child(1){grid-column:1/6;grid-row:1}
+.rs-frame:nth-child(1) img,.rs-frame:nth-child(3) img{aspect-ratio:4/5}
+.rs-frame:nth-child(2){grid-column:7/12;grid-row:1;margin-top:12vw}
+.rs-frame:nth-child(2) img{aspect-ratio:4/3}
+.rs-frame:nth-child(3){grid-column:3/7;grid-row:2;margin-top:-6vw}
+.rs-frame:nth-child(4){grid-column:9/13;grid-row:2;margin-top:2vw}
+.rs-frame:nth-child(4) img{aspect-ratio:1/1}
+.rs-frame figcaption{margin-top:12px;font-size:14px;color:var(--warm-white-dim)}
+@media (max-width:820px){.rstrip{grid-template-columns:1fr 1fr;gap:3vw}
+  .rs-frame:nth-child(n){grid-column:auto;grid-row:auto;margin-top:0}
+  .rs-frame:nth-child(n) img{aspect-ratio:4/5}}
+
+/* ---------- roastery: pinned horizontal three acts ------------------------ */
+.acts3{position:relative}
+.acts3-pin{position:relative;height:100vh;overflow:hidden}
+.acts3-track{display:flex;height:100%;width:max-content;will-change:transform}
+.a3{flex:none;width:100vw;height:100%;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+  align-items:center;gap:5vw;padding:16vh var(--pad) 12vh}
+.a3-word{font-family:var(--heading);font-weight:800;font-size:clamp(2.8rem,7vw,7.6rem);letter-spacing:-.065em;
+  line-height:.82;margin:0 0 3.4vh -.04em;color:var(--warm-white);white-space:nowrap}
+.a3-stat{font-family:var(--heading);font-weight:500;font-size:clamp(1.2rem,1.7vw,1.7rem);letter-spacing:-.03em;
+  color:var(--accent);margin:0 0 2vh}
+.a3-copy p:last-child{max-width:40ch;font-size:16px;line-height:1.6;color:var(--warm-white-dim);margin:0}
+.a3 figure{margin:0;justify-self:center;width:min(30vw,56vh);aspect-ratio:4/5;overflow:hidden}
+.a3 figure img{width:100%;height:100%;object-fit:cover;transform:scale(1.18);filter:brightness(.82) saturate(.9)}
+.a3-prog{position:absolute;top:12vh;left:var(--pad);display:flex;gap:3vw;z-index:2}
+.a3-prog span{font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(241,237,228,.55);transition:color .4s}
+.a3-prog span.on{color:var(--accent)}
+.a3-bar{position:absolute;left:var(--pad);right:var(--pad);bottom:7vh;height:1px;background:rgba(241,237,228,.12)}
+.a3-bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+
+/* ---------- roastery: stacking brew bands ---------------------------------- */
+.bands{position:relative;padding:0 var(--pad) 10vh}
+.band{position:sticky;top:calc(14vh + var(--i) * 8.5vh);height:66vh;margin-bottom:8vh;padding:2.4vh 3vw 4vh;
+  display:flex;flex-direction:column;will-change:transform}
+.band-top{display:flex;gap:3vw;align-items:baseline;font-size:12px;font-weight:500;letter-spacing:.18em;
+  text-transform:uppercase;padding-bottom:2vh;border-bottom:1px solid currentColor;opacity:.85}
+.band-top em{margin-left:auto;font-style:normal;letter-spacing:.04em;font-size:14px}
+.band-top em::before{content:'\20B9';opacity:.6;margin-right:1px}
+.band-top span:first-child{color:inherit;opacity:1;font-weight:600}
+.bn{font-family:var(--heading);font-weight:800;font-size:clamp(2.6rem,7vw,7.8rem);letter-spacing:-.065em;
+  line-height:.82;margin:auto 0 0 -.04em;white-space:nowrap}
+.bd{font-size:16px;line-height:1.5;margin:2.6vh 0 0;max-width:40ch;opacity:.85}
+/* the band photo fills the right side under the label strip; the next band covers
+   it as it stacks, so only the strip stays readable (as before) */
+.band-ph{position:absolute;right:3vw;top:calc(4.4vh + 32px);bottom:4vh;aspect-ratio:3/4;margin:0;overflow:hidden}
+.band-ph img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.9) saturate(.92)}
+.bn,.bd{position:relative;z-index:1}
+.b1{background:#1E3A28;color:var(--warm-white)}
+.b2{background:#C6A472;color:#0A2111}
+.b3{background:#F1EDE4;color:#0A2111}
+.b4{background:#12291A;color:var(--warm-white);box-shadow:inset 0 0 0 1px rgba(241,237,228,.1)}
+.b5{background:#2A4033;color:var(--warm-white)}
+
+@media (max-width:820px){
+  /* no horizontal pin (no GSAP, reduced motion): the three panels stack */
+  .acts3:not(.h) .acts3-pin{height:auto;overflow:visible}
+  .acts3:not(.h) .acts3-track{flex-direction:column;width:auto}
+  .acts3:not(.h) .a3{width:auto;height:auto;padding:12vw var(--pad)}
+  .acts3:not(.h) .a3-prog,.acts3:not(.h) .a3-bar{display:none}
+  .a3{grid-template-columns:1fr;gap:6vw}
+  .a3 figure{width:78vw;justify-self:start}
+  .a3-word{font-size:15vw}
+  /* 2026-09-13: the horizontal pin on phones too (site.js adds .h), one panel per
+     screen: word, line, copy, photo; sized to fit a 667px iPhone SE */
+  .acts3.h .a3{align-content:center;gap:3vh;padding:calc(9vh + 24px) var(--pad) calc(6vh + 40px)}
+  .acts3.h .a3-word{margin-bottom:2vh}
+  .acts3.h .a3-stat{margin-bottom:1.4vh}
+  .acts3.h .a3 figure{width:min(62vw,28vh)}
+  .acts3.h .a3-prog{top:calc(9vh - 8px);gap:5vw}
+  /* the doughnut track is the progress line at the bottom of a phone; a second line
+     right above it read as a glitch, the Sourcing/Roasting/Brewing labels stay */
+  .acts3.h .a3-bar{display:none}
+  .band{top:calc(12vh + var(--i) * 6vh);height:54vh;padding:2vh 5vw 3vh}
+  .band-top{gap:3vw;font-size:12px;letter-spacing:.1em}
+  .bn{font-size:10.5vw}
+  .bd{font-size:15px}
+  .band-ph{right:5vw;top:calc(4vh + 30px);bottom:auto;width:38vw}
+}
+
+</style>
+</head>
+<body>
+
+<header id="nav">
+  <a class="wordmark" href="index.html"><span class="nav-mark" data-ds-mark="load" aria-hidden="true"></span>Doubleshot</a>
+  <nav>
+    <a href="menu.html">Menu</a>
+    <a href="bakery.html">Bakery</a>
+    <a href="roastery.html">Roastery</a>
+    <a href="locations.html">Locations</a>
+    <!-- 2026-09-12: real order links, each verified to load (qa/2026-09-12_order).
+         Zomato = delivery, 5 outlets. Swiggy lists these cafes only on Dineout (table
+         booking); its delivery pages returned an error, so they are labelled as such. -->
+    <details class="order">
+      <summary>Order <b>Zomato</b><i>/</i><b>Swiggy</b></summary>
+      <div class="order-pop">
+        <p class="op-k">Order from</p>
+        <div class="op-choose">
+          <button type="button" data-op="zomato"><b>Zomato</b><span>Delivery from five cafés</span></button>
+          <button type="button" data-op="swiggy"><b>Swiggy</b><span>Book a table (Dineout)</span></button>
+        </div>
+        <div class="op-sec" data-op-sec="zomato">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Zomato</h3>
+          <ul class="op-list">
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-1-ranjit-avenue/order" target="_blank" rel="noopener">Ranjit Avenue <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-kabir-park/order" target="_blank" rel="noopener">Kabir Park <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/amritsar/doubleshot-coffee-roasters-gt-road/order" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.zomato.com/chandigarh/doubleshot-coffee-roasters-sector-78-mohali/order" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+            <li><a href="https://www.zomato.com/jalandhar/doubleshot-coffee-roasters-3-model-town/order" target="_blank" rel="noopener">Model Town <span>Jalandhar</span></a></li>
+          </ul>
+        </div>
+        <div class="op-sec" data-op-sec="swiggy">
+          <button type="button" class="op-back">&larr; Back</button>
+          <h3>Swiggy</h3>
+          <ul class="op-list">
+            <li><a href="https://www.swiggy.com/restaurants/amritsar/g-t-road/double-shot-coffee-roasters-680189/dineout" target="_blank" rel="noopener">GT Road <span>Amritsar</span></a></li>
+            <li><a href="https://www.swiggy.com/restaurants/chandigarh/sector-78-mohali/doubleshot-coffee-roasters-693808/dineout" target="_blank" rel="noopener">Sector 78 <span>Mohali</span></a></li>
+          </ul>
+          <p class="op-note">On Swiggy these cafés take table bookings (Dineout). For delivery, use Zomato.</p>
+        </div>
+      </div>
+    </details>
+    <!-- 2026-09-13: phones (<=820px) get every page from this button (assets/mnav.js) -->
+    <button class="mnav-btn" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open pages"><i></i><i></i></button>
+  </nav>
+</header>
+<div class="mnav" id="mnav" hidden>
+  <nav aria-label="Pages">
+    <ol class="mnav-list">
+      <li style="--i:0"><a href="index.html"><span>Home</span></a></li>
+      <li style="--i:1"><a href="menu.html"><span>Menu</span><em>Every drink</em></a></li>
+      <li style="--i:2"><a href="bakery.html"><span>Bakery</span><em>100% eggless</em></a></li>
+      <li style="--i:3"><a href="roastery.html"><span>Roastery</span><em>On premise</em></a></li>
+      <li style="--i:4"><a href="locations.html"><span>Locations</span><em>Five caf&eacute;s</em></a></li>
+    </ol>
+    <div class="mnav-foot">
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <a class="ig" href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+<section class="hx framed">
+  <div class="hx-copy">
+    <div class="overline">Sourcing and roasting</div>
+    <h1 class="hx-title">Roastery</h1>
+    <p class="hx-sub">Handpicked, roasted on premise, ground to order.</p>
+  </div>
+  <figure class="hx-art frame" data-parallax="-0.14" data-scale="1"><div class="hx-art-in"><img src="assets/img/roasting.webp" alt="Freshly roasted beans turning in the cooling tray of our roaster"></div></figure>
+</section>
+<div class="wrap" style="padding-bottom:4vw">
+  <p class="lede" data-reveal>Two of the three words on our door happen before anyone
+     orders anything. This is that part.</p>
+</div>
+
+<!-- The roastery in the client's own photos (2026-09-11 fill pass). -->
+<section class="rstrip" aria-label="Inside the roastery">
+  <figure class="rs-frame"><img loading="lazy" src="assets/img/strip-C7Rs5gdBMAP.webp" width="640" height="800" alt="Beans turning in the cooling tray of the roaster"><figcaption>Roasted on premise</figcaption></figure>
+  <figure class="rs-frame"><img loading="lazy" src="assets/img/sourcing.webp" width="720" height="520" alt="Roasted coffee beans, still steaming"><figcaption>Straight out of the roast</figcaption></figure>
+  <figure class="rs-frame"><img loading="lazy" src="assets/img/strip-Cyq5RpChjmL.webp" width="640" height="800" alt="A V60 pour-over dripping into a glass server"><figcaption>Poured by hand</figcaption></figure>
+  <figure class="rs-frame"><img loading="lazy" src="assets/img/strip-C4XSH7-xMnz.webp" width="576" height="560" alt="Milk poured into a cappuccino at the bar"><figcaption>Finished at the bar</figcaption></figure>
+</section>
+
+<!-- The three acts as one pinned horizontal scroll (desktop). Real photos only. -->
+<section class="acts3">
+  <div class="acts3-pin">
+    <div class="a3-prog"><span>Sourcing</span><span>Roasting</span><span>Brewing</span></div>
+    <div class="acts3-track">
+      <article class="a3">
+        <div class="a3-copy">
+          <h2 class="a3-word">Sourcing</h2>
+          <p class="a3-stat">By hand</p>
+          <p>The leaves and cherries engraved on our cup are not decoration. Every cherry is
+             picked by hand, one at a time, because a machine cannot tell which ones are ready.</p>
+        </div>
+        <figure><img loading="lazy" src="assets/img/sourcing.webp" width="720" height="520" alt="Roasted coffee beans, still steaming"></figure>
+      </article>
+      <article class="a3">
+        <div class="a3-copy">
+          <h2 class="a3-word">Roasting</h2>
+          <p class="a3-stat">On premise</p>
+          <p>We roast in the same building you drink in. Small batches, tasted before any of
+             it reaches the counter.</p>
+        </div>
+        <figure><img loading="lazy" src="assets/img/roasting.webp" width="720" height="850" alt="Freshly roasted beans turning in the cooling tray of our roaster"></figure>
+      </article>
+      <article class="a3">
+        <div class="a3-copy">
+          <h2 class="a3-word">Brewing</h2>
+          <p class="a3-stat">Ground to order</p>
+          <p>Never ground before you ask for it, then pulled on the La Marzocco at the bar.</p>
+        </div>
+        <figure><img loading="lazy" src="assets/img/roastery-machine.webp" width="720" height="560" alt="The La Marzocco espresso machine on the counter, cups warming on top"></figure>
+      </article>
+    </div>
+    <div class="a3-bar"><i></i></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section data-reveal style="margin-bottom:var(--section)">
+    <h2 class="sec">Two you will not find on a Western menu</h2>
+    <div class="cols">
+      <div>
+        <h3 class="big">Jaggery latt&eacute;</h3>
+        <p style="color:var(--warm-white-dim);line-height:1.6;max-width:38ch">
+          Gur, not sugar. It behaves differently in milk, and it tastes like something
+          rather than just sweet.</p>
+      </div>
+      <div>
+        <h3 class="big">Masala chai latt&eacute;</h3>
+        <p style="color:var(--warm-white-dim);line-height:1.6;max-width:38ch">
+          The one you actually grew up on, pulled on an espresso machine instead of
+          boiled to death.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="sec" data-reveal>Then you can taste the roast five ways</h2>
+</div>
+
+<!-- Brew methods as full-width bands that stack as you scroll (Sons & Daughters).
+     Each band keeps its label strip visible once the next one covers it. -->
+<section class="bands">
+  <!-- 2026-09-11: each band carries a photo (client: "the animation is good, but it is
+       empty"). Client's own posts, qa/2026-09-11_images/crop_bands.py. Only the V60
+       (Cyq5RpChjmL) and Aeropress (Cxzhp2-RVVa) shots show that method; the others are
+       honest bar/table shots with alts that say what is in them. Ask for real
+       Kalita, French press and cold brew photos. -->
+  <article class="band b1" style="--i:0"><div class="band-top"><span>V60</span><span>Pour-over, hot or iced</span><em>260</em></div>
+    <figure class="band-ph"><img loading="lazy" src="assets/img/band-v60.webp" width="720" height="960" alt="Water poured from a gooseneck kettle into a V60 over a glass server"></figure>
+    <h3 class="bn">V60</h3><p class="bd">Poured by hand, in circles, over a paper filter.</p></article>
+  <article class="band b2" style="--i:1"><div class="band-top"><span>Kalita</span><span>Pour-over, hot or iced</span><em>260</em></div>
+    <figure class="band-ph"><img loading="lazy" src="assets/img/band-grinders.webp" width="390" height="520" alt="The grinders at the bar, their hoppers full of our beans"></figure>
+    <h3 class="bn">Kalita</h3><p class="bd">A flat bed, so the water meets every ground evenly.</p></article>
+  <article class="band b3" style="--i:2"><div class="band-top"><span>Aeropress</span><span>Pressure, short contact</span><em>260</em></div>
+    <figure class="band-ph"><img loading="lazy" src="assets/img/band-aeropress.webp" width="720" height="960" alt="Hot water poured into an Aeropress standing on a scale"></figure>
+    <h3 class="bn">Aeropress</h3><p class="bd">Pressed through, quick and clean.</p></article>
+  <article class="band b4" style="--i:3"><div class="band-top"><span>French press</span><span>Immersion, full body</span><em>260</em></div>
+    <figure class="band-ph"><img loading="lazy" src="assets/img/band-cup.webp" width="720" height="960" alt="A latte and a cookie on a saucer by a rain-streaked window"></figure>
+    <h3 class="bn">French press</h3><p class="bd">Steeped whole, then plunged.</p></article>
+  <article class="band b5" style="--i:4"><div class="band-top"><span>Cold brew</span><span>Steeped 24 hours</span><em>245</em></div>
+    <figure class="band-ph"><img loading="lazy" src="assets/img/band-glass.webp" width="900" height="1200" alt="A cut-glass tumbler held in a black-gloved hand"></figure>
+    <h3 class="bn">Cold brew</h3><p class="bd">Coarse ground and steeped for twenty four hours.</p></article>
+</section>
+
+<div class="wrap" style="padding-top:6vw">
+  <div class="btns"><a class="btn" href="menu.html">See the full menu</a></div>
+</div>
+</main>
+<div class="marquee" aria-hidden="true">
+  <div class="mq-track"><span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b><span>Sourcing</span><b>|</b><span>Roasting</span><b>|</b><span>Brewing</span><b>|</b><span class="dim">100% eggless</span><b>|</b><span class="dim">Amritsar</span><b>|</b><span class="dim">Mohali</span><b>|</b><span class="dim">Jalandhar</span><b>|</b></div>
+</div>
+<footer>
+  <div class="giant" aria-hidden="true">Doubleshot</div>
+  <div class="foot-grid">
+    <div>
+      <span class="foot-mark" data-ds-mark="view" aria-hidden="true"></span>
+      <p>Sourcing, roasting and brewing in Punjab.<br>100% eggless artisanal bakery &amp; savoury.</p>
+    </div>
+    <div>
+      <h2>Visit</h2>
+      <a href="locations.html">Amritsar</a>
+      <a href="locations.html">Mohali</a>
+      <a href="locations.html">Jalandhar</a>
+      <a href="locations.html">Chandigarh (opening soon)</a>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <a href="tel:+917743007183">+91 77430 07183</a>
+      <p>Every day, 9:00 to 21:00</p>
+      <a href="https://www.instagram.com/doubleshotroasters/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+  <div class="fl">SCO 49, B Block, District Shopping Centre, Ranjit Avenue, Amritsar 143001</div>
+</footer>
+<script defer src="assets/liquid.js?v=1789759582"></script>
+<script defer src="assets/velocity.js?v=1789759582"></script>
+<script defer src="assets/order.js?v=1789759582"></script>
+<script defer src="assets/mnav.js?v=1789759582"></script>
+<script defer src="assets/donut.js?v=1789759582"></script>
+<script defer src="assets/site.js?v=1789759582"></script>
+</body>
+</html>
